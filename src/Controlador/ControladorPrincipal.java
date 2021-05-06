@@ -17,10 +17,16 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class ControladorPrincipal {
 
     public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+        /*    for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                     if ("Windows".equals(info.getName())) {       javax.swing.UIManager.setLookAndFeel(info.getClassName());
+        
+           
 }
-}
+                    
+}*/
+    javax.swing.UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
+        
+            
 
         FrmLogin vistaLogin = new FrmLogin();
         ControladorLogin clogin = new ControladorLogin(vistaLogin);

@@ -7,7 +7,7 @@ package Controlador;
 
 import Modelo.Cliente;
 import Modelo.dbconecction.CRUD;
-import Vista.FrmAgregarPerfil;
+import Vista.FrmVerPerfil;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -23,10 +23,20 @@ import java.util.logging.Logger;
  */
 public class ControladorAgregarPerfil {
     
-    FrmAgregarPerfil vistaAgregarPerfil;
+    FrmVerPerfil vistaAgregarPerfil;
     CRUD consulta = CRUD.getInstance();
-    public ControladorAgregarPerfil(FrmAgregarPerfil vistaAgregarPerfil) {
+    ResultSet rs;
+    int id;
+    @SuppressWarnings("empty-statement")
+    public ControladorAgregarPerfil(FrmVerPerfil vistaAgregarPerfil){
         this.vistaAgregarPerfil=vistaAgregarPerfil;
+        try{
+        rs = consulta.select("SELECT MAX(idCliente) FROM cliente");
+                    rs.next();
+                    id= rs.getInt(1) + 1;
+        }catch(Exception ex){
+        }
+        vistaAgregarPerfil.txtcodigo.setText(id+"");
         InsertarEventos();
     }
     public void InsertarEventos(){
@@ -34,9 +44,7 @@ public class ControladorAgregarPerfil {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 try {
-                    ResultSet rs = consulta.select("SELECT MAX(idCliente) FROM cliente");
-                    rs.next();
-                    int id= rs.getInt(1) + 1;
+                    
                     int genero;
                     if(vistaAgregarPerfil.rbMasculino.isSelected()){
                         genero=1;
@@ -44,7 +52,7 @@ public class ControladorAgregarPerfil {
                     Cliente nuevoCliente = new Cliente(id,
                             vistaAgregarPerfil.txtnombre.getText(),
                             vistaAgregarPerfil.txtapellidos.getText(),
-                            new SimpleDateFormat("dd/mm/yyyy").parse(vistaAgregarPerfil.txtfechanac.getText()),
+                            new SimpleDateFormat("dd-mm-yyyy").parse(vistaAgregarPerfil.txtfechanac.getText()),
                             vistaAgregarPerfil.txtdireccion.getText(),
                             vistaAgregarPerfil.txttelefono.getText(),
                             genero,
@@ -54,8 +62,8 @@ public class ControladorAgregarPerfil {
                                     } catch (ParseException ex) {
                     Logger.getLogger(ControladorAgregarPerfil.class.getName()).log(Level.SEVERE, null, ex);
                     
-                } catch (SQLException ex) {
-                    Logger.getLogger(ControladorAgregarPerfil.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    
                 }
             }
         });
