@@ -63,7 +63,7 @@ public class ControladorActualizarPerfil {
                 "CLIENTE.fechaNac = " + "'"+strFechaNac+"' ," + 
                 "CLIENTE.direccion = " + "'"+nuevoCliente.getDireccion()+"' ," + 
                 "CLIENTE.telefono = " + "'"+nuevoCliente.getTelefono()+"' ," + 
-                "CLIENTE.dni = " + "'"+nuevoCliente.getDNI()+"'" + 
+                "CLIENTE.dni = " + "'"+nuevoCliente.getDNI()+"'" +   
                         " WHERE idCliente="+ nuevoCliente.getIdCliente()
                 );
                 contrPerfiles.vistaPerfiles.jTable1.setModel( contrPerfiles.getTablaClientes());
