@@ -12,6 +12,7 @@ import java.util.*;
  *
  * @author Percy
  */
+// comentariosdad sa
 public class Cliente {
     private int idCliente;
     private String nombres;
