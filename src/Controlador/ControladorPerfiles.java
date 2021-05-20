@@ -32,18 +32,33 @@ import javax.swing.table.DefaultTableModel;
  * @author Percy
  */
 public class ControladorPerfiles {
-    FrmPerfiles vistaPerfiles;
-    ImageIcon rutaImagenAmostrar;
-    CRUD consulta = CRUD.getInstance();
-    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    ArrayList<Cliente> clientes;
-    DefaultTableModel tabla;
+    protected FrmPerfiles vistaPerfiles;
+    private ImageIcon rutaImagenAmostrar;
+    private CRUD consulta = CRUD.getInstance();
+    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private ArrayList<Cliente> clientes;
+    private DefaultTableModel tabla;
+    //private Cliente retornar;
+    private ControladorNuevaReservacion controladorNR;
     public ControladorPerfiles(FrmPerfiles vistaFrmPerfiles) {
         
         this.vistaPerfiles=vistaFrmPerfiles;
         tabla=getTablaClientes();
         this.vistaPerfiles.jTable1.setModel(tabla);
+        //this.retornar=retornar;
         InsertarEventos();
+        InsertarEventoEditar();  
+        InsertarImagenes();
+        this.vistaPerfiles.setVisible(true);
+    }
+    public ControladorPerfiles(FrmPerfiles vistaFrmPerfiles,Cliente retornar,ControladorNuevaReservacion controladorNR){
+        this.vistaPerfiles=vistaFrmPerfiles;
+        this.controladorNR=controladorNR;
+        tabla=getTablaClientes();
+        this.vistaPerfiles.jTable1.setModel(tabla);
+       // this.retornar=retornar;
+        InsertarEventos();
+        InsertarEventoRetornar(retornar);
         InsertarImagenes();
         this.vistaPerfiles.setVisible(true);
     }
@@ -71,7 +86,7 @@ public class ControladorPerfiles {
                 String direccion=rs.getString(5);
                 String tel=rs.getString(6);
                 int gen=rs.getInt(7);
-                int dni=rs.getInt(8);
+                String dni=rs.getString(8);
                 Cliente nuevoCliente = new Cliente(auxId, nombres, apellidos, utilDate, direccion, tel, gen, dni);
                 clientes.add(nuevoCliente);
 	    }
@@ -132,6 +147,60 @@ public class ControladorPerfiles {
                 vistaAgregarPerfil.setVisible(true);
             }
         });
+        
+        this.vistaPerfiles.jTextField1.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent ke) {
+              
+                
+            }
+
+            @Override
+            public void keyPressed(KeyEvent ke) {
+               
+            }
+
+            @Override
+            public void keyReleased(KeyEvent ke) {
+                  tabla= new DefaultTableModel();
+                vistaPerfiles.jTable1.removeAll();
+                String[] headers = {"ID", "Nombres", "Apellidos", "fecha Nacimiento", "Direccion", "Teléfono","genero", "DNI"};
+                for (String i : headers) {
+                    tabla.addColumn(i);
+                }
+                for(int i=0;i<clientes.size();i++){
+                    if(clientes.get(i).getNombres().toUpperCase().contains(vistaPerfiles.jTextField1.getText().toUpperCase())){
+                    String[] datos= new String[8];
+                    datos[0] = String.valueOf(clientes.get(i).getIdCliente());
+                    datos[1] = clientes.get(i).getNombres();
+                    datos[2] = clientes.get(i).getApellidos();
+                    datos[3] = dateFormat.format( clientes.get(i).getFechaNac() );
+                    datos[4] = clientes.get(i).getDireccion();
+                    datos[5] = clientes.get(i).getTelefono();
+
+                    datos[6] = String.valueOf(clientes.get(i).getGenero());
+
+                    datos[7] = String.valueOf(clientes.get(i).getDNI());
+
+
+                    tabla.addRow(datos);
+                    }
+                }
+                vistaPerfiles.jTable1.setModel(tabla);
+            }
+        });
+    }
+    public void InsertarImagenes(){
+        rutaImagenAmostrar = new ImageIcon("src/IMAGENES/atras.png");
+        Image Imagen= rutaImagenAmostrar.getImage();
+       //Remidencionamos
+        Image ImagenModificada= Imagen.getScaledInstance(115, 57, java.awt.Image.SCALE_SMOOTH);
+       //Mostramos
+       rutaImagenAmostrar= new ImageIcon(ImagenModificada);
+       vistaPerfiles.lblAtras.setIcon(rutaImagenAmostrar);
+    }
+
+    private void InsertarEventoEditar() {
         this.vistaPerfiles.jTable1.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent me) {
@@ -164,55 +233,44 @@ public class ControladorPerfiles {
             }
             
         });
-        this.vistaPerfiles.jTextField1.addKeyListener(new KeyListener() {
+    }
+
+    private void InsertarEventoRetornar(Cliente retornar) {
+        this.vistaPerfiles.jTable1.addMouseListener(new MouseListener() {
             @Override
-            public void keyTyped(KeyEvent ke) {
-                tabla= new DefaultTableModel();
-                vistaPerfiles.jTable1.removeAll();
-                String[] headers = {"ID", "Nombres", "Apellidos", "fecha Nacimiento", "Direccion", "Teléfono","genero", "DNI"};
-                for (String i : headers) {
-                    tabla.addColumn(i);
-                }
-                for(int i=0;i<clientes.size();i++){
-                    if(clientes.get(i).getNombres().toUpperCase().contains(vistaPerfiles.jTextField1.getText().toUpperCase())){
-                    String[] datos= new String[8];
-                    datos[0] = String.valueOf(clientes.get(i).getIdCliente());
-                    datos[1] = clientes.get(i).getNombres();
-                    datos[2] = clientes.get(i).getApellidos();
-                    datos[3] = dateFormat.format( clientes.get(i).getFechaNac() );
-                    datos[4] = clientes.get(i).getDireccion();
-                    datos[5] = clientes.get(i).getTelefono();
-
-                    datos[6] = String.valueOf(clientes.get(i).getGenero());
-
-                    datos[7] = String.valueOf(clientes.get(i).getDNI());
-
-
-                    tabla.addRow(datos);
-                    }
-                }
-                vistaPerfiles.jTable1.setModel(tabla);
-                
+            public void mouseClicked(MouseEvent me) {
+               //Aparesca
+               int id= Integer.parseInt((String) vistaPerfiles.jTable1.getValueAt( vistaPerfiles.jTable1.getSelectedRow(), 0));
+               String nombre= (String) vistaPerfiles.jTable1.getValueAt(vistaPerfiles.jTable1.getSelectedRow(), 1);
+               String apellido= (String) vistaPerfiles.jTable1.getValueAt(vistaPerfiles.jTable1.getSelectedRow(), 2);
+              
+               retornar.setIdCliente(id);
+               retornar.setNombres(nombre);
+               retornar.setApellidos(apellido);
+               controladorNR.vistaNuevaReserva.txtperfil.setText(nombre+" "+apellido);
+               vistaPerfiles.dispose();
             }
 
             @Override
-            public void keyPressed(KeyEvent ke) {
+            public void mousePressed(MouseEvent me) {
                
             }
 
             @Override
-            public void keyReleased(KeyEvent ke) {
+            public void mouseReleased(MouseEvent me) {
+               
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent me) {
                 
             }
+
+            @Override
+            public void mouseExited(MouseEvent me) {
+                
+            }
+            
         });
-    }
-    public void InsertarImagenes(){
-        rutaImagenAmostrar = new ImageIcon("src/IMAGENES/atras.png");
-        Image Imagen= rutaImagenAmostrar.getImage();
-       //Remidencionamos
-        Image ImagenModificada= Imagen.getScaledInstance(115, 57, java.awt.Image.SCALE_SMOOTH);
-       //Mostramos
-       rutaImagenAmostrar= new ImageIcon(ImagenModificada);
-       vistaPerfiles.lblAtras.setIcon(rutaImagenAmostrar);
     }
 }

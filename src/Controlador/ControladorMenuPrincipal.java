@@ -5,6 +5,8 @@
  */
 package Controlador;
 
+import Modelo.Cliente;
+import Modelo.Recepcionista;
 import Vista.FrmLogin;
 import Vista.FrmMenuPrincipal;
 import Vista.FrmNuevaReservacion;
@@ -24,15 +26,17 @@ import javax.swing.JOptionPane;
  * @author Percy
  */
 public class ControladorMenuPrincipal{
-    
-    
-    ImageIcon rutaImagenAmostrar;
+    int idUsuariActivo;
+    protected ImageIcon rutaImagenAmostrar;
     private int option;
-     FrmMenuPrincipal vistaMenuPrincipal;
+    protected FrmMenuPrincipal vistaMenuPrincipal;
     private int boton;
-    ControladorMenuPrincipal(FrmMenuPrincipal vistaMenuPrincipal){
+    private Recepcionista activo;
+    ControladorMenuPrincipal(FrmMenuPrincipal vistaMenuPrincipal,Recepcionista activo){
         
         this.vistaMenuPrincipal=vistaMenuPrincipal;
+        this.activo=activo;
+        this.vistaMenuPrincipal.txtUsuarioActivo.setText("Bienvenid@ "+ activo.getNombre()+" "+activo.getApellido());
         ActivarEventos();
         InsertarImagenes();
     }
@@ -43,6 +47,7 @@ public class ControladorMenuPrincipal{
         public void actionPerformed(ActionEvent ae) {
           //  JOptionPane.showMessageDialog(null, "Ingresaste a Perfiles");
             FrmPerfiles vistaPerfiles= new FrmPerfiles();
+            Cliente nada=new Cliente();
             ControladorPerfiles coPerfiles=new ControladorPerfiles(vistaPerfiles);
         }
         };
@@ -50,13 +55,17 @@ public class ControladorMenuPrincipal{
             @Override
             public void actionPerformed(ActionEvent ae) {
 
-               // JOptionPane.showMessageDialog(null, "Ingresaste a Reservaciones");
+               FrmReservaciones vistaReservaciones = new FrmReservaciones();
+               ControladorReservaciones coReservaciones = new ControladorReservaciones(vistaReservaciones);
+               
             }
         };
         ActionListener acNuevaReservacion=new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-
+                FrmNuevaReservacion nuevaReserva = new FrmNuevaReservacion();
+                ControladorNuevaReservacion coNuevaReserva=new ControladorNuevaReservacion(nuevaReserva,activo.getIdRecepcionista());
+                nuevaReserva.setVisible(true);
                // JOptionPane.showMessageDialog(null, "Ingresaste a NuevaReservacion");
             }
         };

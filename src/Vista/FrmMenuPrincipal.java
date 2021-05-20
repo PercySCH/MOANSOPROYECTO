@@ -39,6 +39,7 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
         lblPerfil = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         lblNuevaReserva = new javax.swing.JLabel();
+        txtUsuarioActivo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -129,14 +130,14 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
             .addComponent(lblNuevaReserva, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
+        txtUsuarioActivo.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        txtUsuarioActivo.setForeground(new java.awt.Color(255, 255, 255));
+        txtUsuarioActivo.setText("Usuario Activo");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(81, 81, 81)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -155,11 +156,19 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnResevaciones)
                         .addGap(125, 125, 125))))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtUsuarioActivo)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(45, 45, 45)
+                .addGap(11, 11, 11)
+                .addComponent(txtUsuarioActivo)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(80, 80, 80)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -171,7 +180,7 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
                     .addComponent(btnNuevaReservacion)
                     .addComponent(btnPerfiles)
                     .addComponent(btnResevaciones))
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -209,5 +218,6 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
     public javax.swing.JLabel lblNuevaReserva;
     public javax.swing.JLabel lblPerfil;
     public javax.swing.JLabel lblReservaciones;
+    public javax.swing.JLabel txtUsuarioActivo;
     // End of variables declaration//GEN-END:variables
 }

@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
@@ -24,11 +25,11 @@ import javax.swing.JOptionPane;
  */
 public class ControladorActualizarPerfil {
     
-    FrmVerPerfil vistaVerPerfil;
-    ControladorPerfiles contrPerfiles;
-    CRUD consulta = CRUD.getInstance();
-    ResultSet rs;
-    Cliente nuevoCliente;
+    protected FrmVerPerfil vistaVerPerfil;
+    protected ControladorPerfiles contrPerfiles;
+    protected CRUD consulta = CRUD.getInstance();
+    protected ResultSet rs;
+    private Cliente nuevoCliente;
     public ControladorActualizarPerfil(FrmVerPerfil vistaVerPerfil,ControladorPerfiles contrPerfiles,int idCliente) {
         this.vistaVerPerfil=vistaVerPerfil;
         this.contrPerfiles=contrPerfiles;
@@ -39,12 +40,37 @@ public class ControladorActualizarPerfil {
         vistaVerPerfil.btnActualizar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                try{
                 nuevoCliente.setNombres(vistaVerPerfil.txtnombre.getText());
+                nuevoCliente.setApellidos(vistaVerPerfil.txtapellidos.getText());
+                nuevoCliente.setFechaNac( new SimpleDateFormat("dd-MM-yyyy").parse(vistaVerPerfil.txtfechanac.getText()));
+                nuevoCliente.setDireccion(vistaVerPerfil.txtdireccion.getText());
+                nuevoCliente.setTelefono(vistaVerPerfil.txttelefono.getText());
+                int genero;
+                    if(vistaVerPerfil.rbMasculino.isSelected()){
+                        genero=1;
+                    }else genero=2;
+          
+                nuevoCliente.setGenero(genero);
+                nuevoCliente.setDNI(vistaVerPerfil.txtdni.getText());
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
+                String strFechaNac = formatter.format(nuevoCliente.getFechaNac());
+                
+                
                 consulta.update("UPDATE CLIENTE SET " +
-                "CLIENTE.nombres = " + "'"+nuevoCliente.getNombres()+"'" + " WHERE idCliente="+ nuevoCliente.getIdCliente()
+                "CLIENTE.nombres = " + "'"+nuevoCliente.getNombres()+"' ," +
+                "CLIENTE.apellidos = " + "'"+nuevoCliente.getApellidos()+"' ," + 
+                "CLIENTE.fechaNac = " + "'"+strFechaNac+"' ," + 
+                "CLIENTE.direccion = " + "'"+nuevoCliente.getDireccion()+"' ," + 
+                "CLIENTE.telefono = " + "'"+nuevoCliente.getTelefono()+"' ," + 
+                "CLIENTE.dni = " + "'"+nuevoCliente.getDNI()+"'" + 
+                        " WHERE idCliente="+ nuevoCliente.getIdCliente()
                 );
                 contrPerfiles.vistaPerfiles.jTable1.setModel( contrPerfiles.getTablaClientes());
                 vistaVerPerfil.dispose();
+                }catch(Exception ex){
+                     JOptionPane.showMessageDialog(null, "Por favor ingrese su fecha de forma correcta");
+                }
             }
         });
         vistaVerPerfil.btnCancelar.addActionListener((ActionEvent ae) -> {
@@ -52,6 +78,7 @@ public class ControladorActualizarPerfil {
         });
     }
     public void DatosCliente(int idCliente){
+         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");  
         rs = consulta.select("SELECT * FROM CLIENTE WHERE CLIENTE.idCliente =" + idCliente);
         try {
 	    while (rs.next()) {
@@ -64,7 +91,7 @@ public class ControladorActualizarPerfil {
                 String direccion=rs.getString(5);
                 String tel=rs.getString(6);
                 int gen=rs.getInt(7);
-                int dni=rs.getInt(8);
+                String dni=rs.getString(8);
                 nuevoCliente = new Cliente(auxId, nombres, apellidos, utilDate, direccion, tel, gen, dni);
 	    }
 	} catch (SQLException ex) {
@@ -75,7 +102,13 @@ public class ControladorActualizarPerfil {
         vistaVerPerfil.txtapellidos.setText(nuevoCliente.getApellidos());
         vistaVerPerfil.txtdireccion.setText(nuevoCliente.getDireccion());
         vistaVerPerfil.txtdni.setText(nuevoCliente.getDNI()+"");
+        vistaVerPerfil.txtfechanac.setText(dateFormat.format(nuevoCliente.getFechaNac())); 
         vistaVerPerfil.txttelefono.setText(nuevoCliente.getTelefono());
+        if(nuevoCliente.getGenero()==1){
+            vistaVerPerfil.rbMasculino.setSelected(true);
+        }else{
+            vistaVerPerfil.rbFemenino.setSelected(true);
+        }
     }
     
 }

@@ -20,9 +20,12 @@ public class Cliente {
     private String direccion;
     private String telefono;
     private int genero;
-    private int DNI;
+    private String DNI;
+    public Cliente(){
+        
+    }
 
-    public Cliente(int idCliente, String nombres, String apellidos, Date fechaNac, String direccion, String telefono, int genero, int DNI) {
+    public Cliente(int idCliente, String nombres, String apellidos, Date fechaNac, String direccion, String telefono, int genero, String DNI) {
         this.idCliente = idCliente;
         this.nombres = nombres;
         this.apellidos = apellidos;
@@ -33,6 +36,15 @@ public class Cliente {
         this.DNI = DNI;
     }
 
+    public String getDNI() {
+        return DNI;
+    }
+
+    public void setDNI(String DNI) {
+        this.DNI = DNI;
+    }
+    
+
     public int getIdCliente() {
         return idCliente;
     }
@@ -41,7 +53,7 @@ public class Cliente {
         return nombres;
     }
 
-    public String getApellidos() {
+    public String getApellidos() {  
         return apellidos;
     }
 
@@ -59,10 +71,6 @@ public class Cliente {
 
     public int getGenero() {
         return genero;
-    }
-
-    public int getDNI() {
-        return DNI;
     }
 
     public void setIdCliente(int idCliente) {
@@ -93,9 +101,6 @@ public class Cliente {
         this.genero = genero;
     }
 
-    public void setDNI(int DNI) {
-        this.DNI = DNI;
-    }
     
     public String statementAgregar(){
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");  

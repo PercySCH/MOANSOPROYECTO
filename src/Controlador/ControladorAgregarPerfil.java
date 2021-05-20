@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -23,11 +24,11 @@ import java.util.logging.Logger;
  */
 public class ControladorAgregarPerfil {
     
-    FrmVerPerfil vistaAgregarPerfil;
-    CRUD consulta = CRUD.getInstance();
-    ResultSet rs;
-    int id;
-    @SuppressWarnings("empty-statement")
+    protected FrmVerPerfil vistaAgregarPerfil;
+    protected CRUD consulta = CRUD.getInstance();
+    protected ResultSet rs;
+    private int id;
+    
     public ControladorAgregarPerfil(FrmVerPerfil vistaAgregarPerfil){
         this.vistaAgregarPerfil=vistaAgregarPerfil;
         try{
@@ -43,8 +44,8 @@ public class ControladorAgregarPerfil {
         vistaAgregarPerfil.btnAgregar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                try {
-                    
+                if(datosCompletos()){
+                    try {
                     int genero;
                     if(vistaAgregarPerfil.rbMasculino.isSelected()){
                         genero=1;
@@ -56,15 +57,18 @@ public class ControladorAgregarPerfil {
                             vistaAgregarPerfil.txtdireccion.getText(),
                             vistaAgregarPerfil.txttelefono.getText(),
                             genero,
-                            Integer.parseInt(vistaAgregarPerfil.txtdni.getText()));
+                            vistaAgregarPerfil.txtdni.getText());
                             consulta.insert("INSERT INTO CLIENTE VALUES ("+nuevoCliente.statementAgregar()+")");
-                            vistaAgregarPerfil.dispose();
-                                    } catch (ParseException ex) {
-                    Logger.getLogger(ControladorAgregarPerfil.class.getName()).log(Level.SEVERE, null, ex);
+                            vistaAgregarPerfil.dispose();             
                     
-                } catch (Exception ex) {
-                    
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Por favor ingrese la fecha de forma correcta");
+                    }
                 }
+                else{
+                    JOptionPane.showMessageDialog(null, "Por favor ingrese todos los campos");
+                }
+                
             }
         });
         
@@ -72,5 +76,16 @@ public class ControladorAgregarPerfil {
             vistaAgregarPerfil.dispose();
         });
     }
-    
+    public Boolean datosCompletos(){
+        if(vistaAgregarPerfil.txtapellidos.getText().compareTo("")==0 ||
+           vistaAgregarPerfil.txtcodigo.getText().compareTo("")==0 ||
+           vistaAgregarPerfil.txtdireccion.getText().compareTo("")==0||
+           vistaAgregarPerfil.txtdni.getText().compareTo("")==0||
+           vistaAgregarPerfil.txtfechanac.getText().compareTo("")==0||
+           vistaAgregarPerfil.txtnombre.getText().compareTo("")==0||
+           vistaAgregarPerfil.txttelefono.getText().compareTo("")==0){
+           return false; 
+        }
+        return true;
+    }
 }

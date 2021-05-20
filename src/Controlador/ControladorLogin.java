@@ -5,6 +5,8 @@
  */
 package Controlador;
 
+import Modelo.Login;
+import Modelo.Recepcionista;
 import Vista.FrmLogin;
 import Vista.FrmMenuPrincipal;
 import java.awt.Image;
@@ -20,11 +22,11 @@ import java.util.TimerTask;
  * @author Percy
  */
 public final class ControladorLogin implements ActionListener{
-    private FrmLogin vista;
-    int contador = 0;
-    Timer timer;
-    TimerTask tarea;
-    ImageIcon rutaImagenAmostrar;
+    protected FrmLogin vista;
+    protected int contador = 0;
+    private Timer timer;
+    private TimerTask tarea;
+    private ImageIcon rutaImagenAmostrar;
     
     ControladorLogin(FrmLogin vista){
         this.vista=vista;
@@ -98,10 +100,12 @@ public final class ControladorLogin implements ActionListener{
     
     @Override
     public void actionPerformed(ActionEvent ae) {
-          if(vista.txtusuario.getText().compareTo("admin")== 0 &&  vista.txtcontrasena.getText().compareTo("admin")==0){
+          Login login= new Login(vista.txtusuario.getText(), vista.txtcontrasena.getText());
+          Recepcionista activo= login.IniciarSesion();
+        if(activo.getIdRecepcionista()!=0){
             //pasar al siguiente formulario
               FrmMenuPrincipal vistaMP=new FrmMenuPrincipal();
-              ControladorMenuPrincipal contrMP= new ControladorMenuPrincipal(vistaMP);
+              ControladorMenuPrincipal contrMP= new ControladorMenuPrincipal(vistaMP,activo);
               vistaMP.setVisible(true);
               vista.dispose();
             
