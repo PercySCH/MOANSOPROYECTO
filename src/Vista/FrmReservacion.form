@@ -98,13 +98,19 @@
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="145" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
                           <Component id="btncancelar" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="148" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
                           <Component id="btnaceptar" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                          <Component id="btnCheckIn" min="-2" pref="83" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                          <Component id="btnCheckOut" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                          <Component id="btnBalance" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="409" max="32767" attributes="0"/>
+                  <EmptySpace pref="317" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -165,8 +171,11 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btncancelar" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btnaceptar" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnCheckIn" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnCheckOut" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnBalance" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -389,6 +398,33 @@
         <Component class="javax.swing.JButton" name="btnVerHabitaciones">
           <Properties>
             <Property name="text" type="java.lang.String" value="Ver Mas"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnCheckIn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="checkIn"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnCheckOut">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="checkOut"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCheckOutActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnBalance">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Balance"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>

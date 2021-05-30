@@ -39,7 +39,7 @@ public class ControladorPerfiles {
     private ArrayList<Cliente> clientes;
     private DefaultTableModel tabla;
     //private Cliente retornar;
-    private ControladorNuevaReservacion controladorNR;
+    private ControladorReservacion controladorNR;
     public ControladorPerfiles(FrmPerfiles vistaFrmPerfiles) {
         
         this.vistaPerfiles=vistaFrmPerfiles;
@@ -51,7 +51,7 @@ public class ControladorPerfiles {
         InsertarImagenes();
         this.vistaPerfiles.setVisible(true);
     }
-    public ControladorPerfiles(FrmPerfiles vistaFrmPerfiles,Cliente retornar,ControladorNuevaReservacion controladorNR){
+    public ControladorPerfiles(FrmPerfiles vistaFrmPerfiles,Cliente retornar,ControladorReservacion controladorNR){
         this.vistaPerfiles=vistaFrmPerfiles;
         this.controladorNR=controladorNR;
         tabla=getTablaClientes();

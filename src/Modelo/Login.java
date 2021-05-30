@@ -40,12 +40,12 @@ public class Login {
     public void setContrasenia(String contrasenia) {
         this.contrasenia = contrasenia;
     }
-    public Recepcionista IniciarSesion(){
+    public Empleado IniciarSesion(){
         // preguntar a la base de datos si ese usuario existe, sino nos botara un 0 
-        Recepcionista activo=new Recepcionista();
+        Empleado activo=new Empleado();
         CRUD consulta = CRUD.getInstance();
         try{
-        ResultSet rs= consulta.select("select * from recepcionista where usuario=\'"+ usuario + "\' and contrasenia=\'"+ contrasenia + "\'");
+        ResultSet rs= consulta.select("select * from empleado where usuario=\'"+ usuario + "\' and contrasenia=\'"+ contrasenia + "\'");
            
             if(rs.next()){
             activo.setIdRecepcionista(rs.getInt(1));
@@ -54,6 +54,8 @@ public class Login {
             System.out.println(activo.getNombre());
             activo.setApellido(rs.getString(3));
             System.out.println(activo.getApellido());
+            activo.setIdRol(rs.getInt(9));
+                System.out.println(activo.getIdRol());
             }
             else{
                 JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecta.");

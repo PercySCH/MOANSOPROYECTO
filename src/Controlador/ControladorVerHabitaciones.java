@@ -9,12 +9,15 @@ import Modelo.Cliente;
 import Modelo.Habitacion;
 import Modelo.dbconecction.CRUD;
 import Vista.FrmVerHabitaciones;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -27,13 +30,14 @@ public class ControladorVerHabitaciones {
     private Habitacion retornar;
     private DefaultTableModel DTM= new DefaultTableModel();
     private CRUD consulta = CRUD.getInstance();
-    private ControladorNuevaReservacion controladorNR;
-    public ControladorVerHabitaciones(FrmVerHabitaciones vistaVerHabitaciones,int tipoHabitacion,Habitacion retornar,ControladorNuevaReservacion controladorNR) {
+    private ControladorReservacion controladorNR;
+    public ControladorVerHabitaciones(FrmVerHabitaciones vistaVerHabitaciones,int tipoHabitacion,Habitacion retornar,ControladorReservacion controladorNR) {
         this.vistaVerHabitaciones=vistaVerHabitaciones;
         this.retornar= retornar;
         this.controladorNR=controladorNR;
         poblarTabla(tipoHabitacion);
         InsertarEventoRetornar();
+        InsertarImagenes();
         vistaVerHabitaciones.setVisible(true);
     }
     private void poblarTabla(int tipoHabitacion) {
@@ -102,6 +106,10 @@ public class ControladorVerHabitaciones {
             }
             
         });
+    }
+
+    private void InsertarImagenes() {
+            
     }
     
 }

@@ -9,12 +9,12 @@ package Vista;
  *
  * @author Percy
  */
-public class FrmNuevaReservacion extends javax.swing.JFrame {
+public class FrmReservacion extends javax.swing.JFrame {
 
     /**
      * Creates new form FrmNuevaReservacion
      */
-    public FrmNuevaReservacion() {
+    public FrmReservacion() {
         initComponents();
     }
 
@@ -53,6 +53,9 @@ public class FrmNuevaReservacion extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         txtNroHabitacion = new javax.swing.JTextField();
         btnVerHabitaciones = new javax.swing.JButton();
+        btnCheckIn = new javax.swing.JButton();
+        btnCheckOut = new javax.swing.JButton();
+        btnBalance = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -146,6 +149,17 @@ public class FrmNuevaReservacion extends javax.swing.JFrame {
 
         btnVerHabitaciones.setText("Ver Mas");
 
+        btnCheckIn.setText("checkIn");
+
+        btnCheckOut.setText("checkOut");
+        btnCheckOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCheckOutActionPerformed(evt);
+            }
+        });
+
+        btnBalance.setText("Balance");
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -191,11 +205,17 @@ public class FrmNuevaReservacion extends javax.swing.JFrame {
                                         .addComponent(btnVerHabitaciones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                             .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addGap(145, 145, 145)
+                        .addGap(66, 66, 66)
                         .addComponent(btncancelar)
-                        .addGap(148, 148, 148)
-                        .addComponent(btnaceptar)))
-                .addContainerGap(409, Short.MAX_VALUE))
+                        .addGap(35, 35, 35)
+                        .addComponent(btnaceptar)
+                        .addGap(35, 35, 35)
+                        .addComponent(btnCheckIn, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(35, 35, 35)
+                        .addComponent(btnCheckOut)
+                        .addGap(35, 35, 35)
+                        .addComponent(btnBalance)))
+                .addContainerGap(317, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -244,8 +264,11 @@ public class FrmNuevaReservacion extends javax.swing.JFrame {
                 .addGap(24, 24, 24)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btncancelar)
-                    .addComponent(btnaceptar))
-                .addGap(54, 54, 54))
+                    .addComponent(btnaceptar)
+                    .addComponent(btnCheckIn)
+                    .addComponent(btnCheckOut)
+                    .addComponent(btnBalance))
+                .addGap(45, 45, 45))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -280,6 +303,10 @@ public class FrmNuevaReservacion extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtpreferenciasActionPerformed
 
+    private void btnCheckOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckOutActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCheckOutActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -297,26 +324,30 @@ public class FrmNuevaReservacion extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmNuevaReservacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmReservacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmNuevaReservacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmReservacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmNuevaReservacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmReservacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmNuevaReservacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmReservacion.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrmNuevaReservacion().setVisible(true);
+                new FrmReservacion().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JButton btnBalance;
     public javax.swing.JButton btnBuscarPerfil;
+    public javax.swing.JButton btnCheckIn;
+    public javax.swing.JButton btnCheckOut;
     public javax.swing.JButton btnVerHabitaciones;
     public javax.swing.JButton btnaceptar;
     public javax.swing.JButton btncancelar;

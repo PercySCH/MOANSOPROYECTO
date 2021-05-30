@@ -5,6 +5,8 @@
  */
 package Modelo;
 
+import Modelo.dbconecction.CRUD;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -21,7 +23,8 @@ public class Reservacion {
     private int cantPersonas;
     private int idRecepcionista;
     private int idCliente;
-
+    CRUD consulta = CRUD.getInstance();
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
     public Reservacion(int nroConfirmacion, Date fechaLlegada, Date fechaSalida, int tipoPago, int estado, int cantPersonas, int idRecepcionista, int idCliente) {
         this.nroConfirmacion = nroConfirmacion;
         this.fechaLlegada = fechaLlegada;
@@ -31,6 +34,7 @@ public class Reservacion {
         this.cantPersonas = cantPersonas;
         this.idRecepcionista = idRecepcionista;
         this.idCliente = idCliente;
+        
     }
     public Reservacion(int idReservacion, Date fechaLlegada, Date fechaSalida, int tipoPago, int estado, int idHabitacion, int cantPersonas, int idRecepcionista, int idCliente) {
         this.nroConfirmacion = idReservacion;
@@ -41,7 +45,7 @@ public class Reservacion {
         this.idHabitacion = idHabitacion;
         this.cantPersonas = cantPersonas;
         this.idRecepcionista = idRecepcionista;
-        this.idCliente = idCliente;
+        this.idCliente = idCliente;             
     }
 
     public int getIdReservacion() {
@@ -115,8 +119,50 @@ public class Reservacion {
     public void setIdCliente(int idCliente) {
         this.idCliente = idCliente;
     }
-    
-    
+    public void CheckIn(){
+        this.estado = 2;
+    }
+    public void CheckOut(){
+        this.estado = 3;
+        consulta.update("UPDATE HABITACION SET estado="+1+" WHERE nrohabitacion= "+this.idHabitacion);
+    }
+    public void InsertarRevervacion(){
+        
+        String strFechaEntrada = formatter.format(this.fechaLlegada);
+        System.out.println(strFechaEntrada);
+        String strFechaSalida = formatter.format(this.fechaSalida);
+        System.out.println(strFechaSalida);
+        
+        consulta.insert("INSERT INTO reservacion VALUES("+
+                            nroConfirmacion+",\""+
+                            strFechaEntrada+"\", \""+
+                            strFechaSalida+"\","+
+                            tipoPago+","+
+                            estado+","+
+                            idHabitacion+","+
+                            cantPersonas+","+
+                            idRecepcionista+","+
+                            idCliente
+                            +")");
+                    consulta.update("UPDATE habitacion SET estado= 2 WHERE NroHabitacion ="+ getIdHabitacion());
+    }
+    public void UpdateReservacion(){
+        
+                 String strFechaEntrada = formatter.format(this.fechaLlegada);
+                System.out.println(strFechaEntrada);
+                 String strFechaSalida = formatter.format(this.fechaSalida);
+                System.out.println(strFechaSalida);
+        
+        consulta.update("UPDATE reservacion"
+                + " SET `fechaLlegada` = '"+strFechaEntrada+"',"
+                + " `fechaSalida` = '"+strFechaSalida+"',"
+                + " `tipoPago` = '"+this.tipoPago+"'"
+                + ", `estado` = '"+this.estado+"',"
+                + " `cantPersonas` = '"+this.cantPersonas+"',"
+                + " `Recepcionista_idRecepcionista` = '"+this.idRecepcionista+"',"
+                + " `Cliente_idCliente` = '"+ this.idCliente+"'"
+                + " WHERE (`NroConfirmacion` = '"+this.nroConfirmacion+"')");
+    }
     
     
 }

@@ -6,9 +6,10 @@
 package Controlador;
 
 import Modelo.Login;
-import Modelo.Recepcionista;
+import Modelo.Empleado;
 import Vista.FrmLogin;
 import Vista.FrmMenuPrincipal;
+import Vista.FrmMenuPrincipalAdmin;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -101,13 +102,22 @@ public final class ControladorLogin implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent ae) {
           Login login= new Login(vista.txtusuario.getText(), vista.txtcontrasena.getText());
-          Recepcionista activo= login.IniciarSesion();
+          Empleado activo= login.IniciarSesion();
         if(activo.getIdRecepcionista()!=0){
-            //pasar al siguiente formulario
+            if(activo.getIdRol()==1){
+                FrmMenuPrincipalAdmin vistaMPA = new FrmMenuPrincipalAdmin();
+                ControladorMenuPrincipalAdmin controMPA= new ControladorMenuPrincipalAdmin(vistaMPA, activo);
+                vistaMPA.setVisible(true);
+                vista.dispose();
+            }
+            else if(activo.getIdRol()==2){
+                //pasar al siguiente formulario
               FrmMenuPrincipal vistaMP=new FrmMenuPrincipal();
               ControladorMenuPrincipal contrMP= new ControladorMenuPrincipal(vistaMP,activo);
               vistaMP.setVisible(true);
               vista.dispose();
+            
+            }
             
         }
     }

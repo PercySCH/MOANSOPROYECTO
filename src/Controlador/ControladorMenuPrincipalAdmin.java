@@ -9,39 +9,36 @@ import Modelo.Cliente;
 import Modelo.Empleado;
 import Vista.FrmLogin;
 import Vista.FrmMenuPrincipal;
-import Vista.FrmReservacion;
+import Vista.FrmMenuPrincipalAdmin;
 import Vista.FrmPerfiles;
+import Vista.FrmReservacion;
 import Vista.FrmReservaciones;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
 
 /**
  *
  * @author Percy
  */
-public class ControladorMenuPrincipal{
+public class ControladorMenuPrincipalAdmin {
     int idUsuariActivo;
     protected ImageIcon rutaImagenAmostrar;
     private int option;
-    protected FrmMenuPrincipal vistaMenuPrincipal;
+    protected FrmMenuPrincipalAdmin vistaMenuPrincipalAdmin;
     private int boton;
     private Empleado activo;
-    ControladorMenuPrincipal(FrmMenuPrincipal vistaMenuPrincipal,Empleado activo){
+    ControladorMenuPrincipalAdmin(FrmMenuPrincipalAdmin vistaMenuPrincipalAdmin,Empleado activo){
         
-        this.vistaMenuPrincipal=vistaMenuPrincipal;
+        this.vistaMenuPrincipalAdmin=vistaMenuPrincipalAdmin;
         this.activo=activo;
-        this.vistaMenuPrincipal.txtUsuarioActivo.setText("Bienvenid@ "+ activo.getNombre()+" "+activo.getApellido());
+        this.vistaMenuPrincipalAdmin.txtUsuarioActivo.setText("Bienvenid@ Admin "+ activo.getNombre()+" "+activo.getApellido());
         ActivarEventos();
         InsertarImagenes();
     }
 
-    public void ActivarEventos(){
+    private void InsertarImagenes() {
         ActionListener acPerfiles=new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent ae) {
@@ -69,50 +66,30 @@ public class ControladorMenuPrincipal{
                // JOptionPane.showMessageDialog(null, "Ingresaste a NuevaReservacion");
             }
         };
-        this.vistaMenuPrincipal.btnPerfiles.addActionListener(acPerfiles);
-        this.vistaMenuPrincipal.btnResevaciones.addActionListener(acReservaciones);
-        this.vistaMenuPrincipal.btnNuevaReservacion.addActionListener(acNuevaReservacion);
-        
-        this.vistaMenuPrincipal.lblAtras.addMouseListener(new MouseListener() {
+        ActionListener acAtras= new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent me) {
+            public void actionPerformed(ActionEvent ae) {
                 FrmLogin vistaLogin = new FrmLogin();
                 ControladorLogin clogin = new ControladorLogin(vistaLogin);
                 vistaLogin.setVisible(true);
-                vistaMenuPrincipal.dispose();
+                vistaMenuPrincipalAdmin.dispose();
             }
-
-            @Override
-            public void mousePressed(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent me) {
-                
-            }
-
-            @Override
-            public void mouseExited(MouseEvent me) {
-                
-            }
-        });
+        };
+        this.vistaMenuPrincipalAdmin.btnPerfiles.addActionListener(acPerfiles);
+        this.vistaMenuPrincipalAdmin.btnReservaciones.addActionListener(acReservaciones);
+        this.vistaMenuPrincipalAdmin.btnNuevaReservacion.addActionListener(acNuevaReservacion);
+        this.vistaMenuPrincipalAdmin.btnAtras.addActionListener(acAtras);
     }
-    public void InsertarImagenes(){
-        
-        // PASAR A UN MODELO EN VEZ DE REPERTIR TODO ESTO VARIAS VECES
+
+    private void ActivarEventos() {
+         // PASAR A UN MODELO EN VEZ DE REPERTIR TODO ESTO VARIAS VECES
         rutaImagenAmostrar = new ImageIcon("src/IMAGENES/usuario.png");
         Image Imagen= rutaImagenAmostrar.getImage();
        //Remidencionamos
        Image ImagenModificada= Imagen.getScaledInstance(168, 168, java.awt.Image.SCALE_SMOOTH);
        //Mostramos
        rutaImagenAmostrar= new ImageIcon(ImagenModificada);
-       vistaMenuPrincipal.lblPerfil.setIcon(rutaImagenAmostrar);
+       vistaMenuPrincipalAdmin.imgPerfiles.setIcon(rutaImagenAmostrar);
        
         rutaImagenAmostrar = new ImageIcon("src/IMAGENES/reception-bell.png");
          Imagen= rutaImagenAmostrar.getImage();
@@ -120,7 +97,7 @@ public class ControladorMenuPrincipal{
         ImagenModificada= Imagen.getScaledInstance(168, 168, java.awt.Image.SCALE_SMOOTH);
        //Mostramos
        rutaImagenAmostrar= new ImageIcon(ImagenModificada);
-       vistaMenuPrincipal.lblNuevaReserva.setIcon(rutaImagenAmostrar);
+       vistaMenuPrincipalAdmin.imgNuevaReservacion.setIcon(rutaImagenAmostrar);
        
         rutaImagenAmostrar = new ImageIcon("src/IMAGENES/reservaciones.png");
          Imagen= rutaImagenAmostrar.getImage();
@@ -128,14 +105,22 @@ public class ControladorMenuPrincipal{
         ImagenModificada= Imagen.getScaledInstance(168, 168, java.awt.Image.SCALE_SMOOTH);
        //Mostramos
        rutaImagenAmostrar= new ImageIcon(ImagenModificada);
-       vistaMenuPrincipal.lblReservaciones.setIcon(rutaImagenAmostrar);
+       vistaMenuPrincipalAdmin.imgReservaciones.setIcon(rutaImagenAmostrar);
+       
+        rutaImagenAmostrar = new ImageIcon("src/IMAGENES/admin.png");
+         Imagen= rutaImagenAmostrar.getImage();
+       //Remidencionamos
+        ImagenModificada= Imagen.getScaledInstance(168, 168, java.awt.Image.SCALE_SMOOTH);
+       //Mostramos
+       rutaImagenAmostrar= new ImageIcon(ImagenModificada);
+       vistaMenuPrincipalAdmin.imgAdministrador.setIcon(rutaImagenAmostrar);
        
        rutaImagenAmostrar = new ImageIcon("src/IMAGENES/logout.png");
          Imagen= rutaImagenAmostrar.getImage();
        //Remidencionamos
-        ImagenModificada= Imagen.getScaledInstance(vistaMenuPrincipal.lblAtras.getWidth(), vistaMenuPrincipal.lblAtras.getHeight(), java.awt.Image.SCALE_SMOOTH);
+        ImagenModificada= Imagen.getScaledInstance(vistaMenuPrincipalAdmin.btnAtras.getWidth(), vistaMenuPrincipalAdmin.btnAtras.getHeight(), java.awt.Image.SCALE_SMOOTH);
        //Mostramos
        rutaImagenAmostrar= new ImageIcon(ImagenModificada);
-       vistaMenuPrincipal.lblAtras.setIcon(rutaImagenAmostrar);
+       vistaMenuPrincipalAdmin.btnAtras.setIcon(rutaImagenAmostrar);
     }
 }

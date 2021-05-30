@@ -13,6 +13,7 @@ public class Conexion {
     
     public Connection getConexion() {
         try{
+            
             Class.forName("com.mysql.cj.jdbc.Driver");
             String root= "root";
             String pass= "admin";
