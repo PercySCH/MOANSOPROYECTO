@@ -5,6 +5,9 @@
  */
 package Modelo;
 
+import Modelo.dbconecction.CRUD;
+import java.sql.ResultSet;
+
 /**
  *
  * @author Percy
@@ -16,6 +19,8 @@ public class Habitacion {
     private boolean cercaPisciona;
     private int estado;
     private int idTipoHabitacion;
+    
+    private CRUD consulta=CRUD.getInstance();
 
     public Habitacion(int idHabitacion, int piso, boolean cercaEscalera, boolean cercaPisciona, int estado, int idTipoHabitacion) {
         this.idHabitacion = idHabitacion;
@@ -29,7 +34,10 @@ public class Habitacion {
     public Habitacion() {
         
     }
-
+    public void createHabitacion(){
+        consulta.insert("INSERT INTO habitacion VALUES ("+getStatemenet()+")");
+                            
+    }
     public int getEstado() {
         return estado;
     }
@@ -77,6 +85,34 @@ public class Habitacion {
     public void setIdTipoHabitacion(int idTipoHabitacion) {
         this.idTipoHabitacion = idTipoHabitacion;
     }
+
+    
+    public String getStatemenet() {
+        return idHabitacion + "," + piso + "," + cercaEscalera + "," + cercaPisciona + "," + estado + "," + idTipoHabitacion ;
+    }
+
+    public void leerHabitacion(int idHabitacion) {
+        try{
+        ResultSet rs= consulta.select("select * from habitacion where nrohabitacion="+idHabitacion);
+        rs.next();
+        this.idHabitacion = rs.getInt(1);
+        this.piso = rs.getInt(2);
+        this.cercaEscalera = rs.getBoolean(3);
+        this.cercaPisciona = rs.getBoolean(4);
+        this.estado = rs.getInt(5);
+        this.idTipoHabitacion = rs.getInt(6);
+        }catch(Exception ex){
+            System.out.println("Ay no, otra vez. Sorry");
+        }   
+        
+    }
+    public boolean isoccupied(){
+        if(this.estado==2){
+            return true;
+        }
+        else return false;
+    }
+    
     
     
 }

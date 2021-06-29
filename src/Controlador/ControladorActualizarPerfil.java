@@ -6,17 +6,15 @@
 package Controlador;
 
 import Modelo.Cliente;
+import Modelo.Convertidor;
 import Modelo.dbconecction.CRUD;
 import Vista.FrmVerPerfil;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -35,6 +33,7 @@ public class ControladorActualizarPerfil {
         this.contrPerfiles=contrPerfiles;
         DatosCliente(idCliente);
         InsertarEventos();
+        insertarImagen();
     }
     public void InsertarEventos(){
         vistaVerPerfil.btnActualizar.addActionListener(new ActionListener() {
@@ -43,31 +42,21 @@ public class ControladorActualizarPerfil {
                 try{
                 nuevoCliente.setNombres(vistaVerPerfil.txtnombre.getText());
                 nuevoCliente.setApellidos(vistaVerPerfil.txtapellidos.getText());
-                nuevoCliente.setFechaNac( new SimpleDateFormat("dd-MM-yyyy").parse(vistaVerPerfil.txtfechanac.getText()));
+                nuevoCliente.setFechaNac( Convertidor.StrToDate(vistaVerPerfil.txtfechanac.getText()));
                 nuevoCliente.setDireccion(vistaVerPerfil.txtdireccion.getText());
                 nuevoCliente.setTelefono(vistaVerPerfil.txttelefono.getText());
                 int genero;
-                    if(vistaVerPerfil.rbMasculino.isSelected()){
-                        genero=1;
-                    }else genero=2;
-          
+                if(vistaVerPerfil.rbMasculino.isSelected()){
+                    genero=1;
+                }else genero=2;
                 nuevoCliente.setGenero(genero);
                 nuevoCliente.setDNI(vistaVerPerfil.txtdni.getText());
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
-                String strFechaNac = formatter.format(nuevoCliente.getFechaNac());
+                nuevoCliente.UpdateCliente();
                 
                 
-                consulta.update("UPDATE CLIENTE SET " +
-                "CLIENTE.nombres = " + "'"+nuevoCliente.getNombres()+"' ," +
-                "CLIENTE.apellidos = " + "'"+nuevoCliente.getApellidos()+"' ," + 
-                "CLIENTE.fechaNac = " + "'"+strFechaNac+"' ," + 
-                "CLIENTE.direccion = " + "'"+nuevoCliente.getDireccion()+"' ," + 
-                "CLIENTE.telefono = " + "'"+nuevoCliente.getTelefono()+"' ," + 
-                "CLIENTE.dni = " + "'"+nuevoCliente.getDNI()+"'" +   
-                        " WHERE idCliente="+ nuevoCliente.getIdCliente()
-                );
                 contrPerfiles.vistaPerfiles.jTable1.setModel( contrPerfiles.getTablaClientes());
                 vistaVerPerfil.dispose();
+                
                 }catch(Exception ex){
                      JOptionPane.showMessageDialog(null, "Por favor ingrese su fecha de forma correcta");
                 }
@@ -77,8 +66,8 @@ public class ControladorActualizarPerfil {
             vistaVerPerfil.dispose();
         });
     }
-    public void DatosCliente(int idCliente){
-         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");  
+    public void DatosCliente(int idCliente){ 
+        
         rs = consulta.select("SELECT * FROM CLIENTE WHERE CLIENTE.idCliente =" + idCliente);
         try {
 	    while (rs.next()) {
@@ -96,19 +85,29 @@ public class ControladorActualizarPerfil {
 	    }
 	} catch (SQLException ex) {
 	    JOptionPane.showMessageDialog(null, "Error:\n" + ex);
-	}  
+	}
+        
         vistaVerPerfil.txtcodigo.setText(nuevoCliente.getIdCliente()+"");
         vistaVerPerfil.txtnombre.setText(nuevoCliente.getNombres());
         vistaVerPerfil.txtapellidos.setText(nuevoCliente.getApellidos());
         vistaVerPerfil.txtdireccion.setText(nuevoCliente.getDireccion());
         vistaVerPerfil.txtdni.setText(nuevoCliente.getDNI()+"");
-        vistaVerPerfil.txtfechanac.setText(dateFormat.format(nuevoCliente.getFechaNac())); 
+        vistaVerPerfil.txtfechanac.setText(Convertidor.DateToString(nuevoCliente.getFechaNac())); 
         vistaVerPerfil.txttelefono.setText(nuevoCliente.getTelefono());
+        
         if(nuevoCliente.getGenero()==1){
             vistaVerPerfil.rbMasculino.setSelected(true);
         }else{
             vistaVerPerfil.rbFemenino.setSelected(true);
         }
     }
-    
+     private void insertarImagen() {
+       ImageIcon rutaImagenAmostrar = new ImageIcon("src/IMAGENES/usuario.png");
+       Image Imagen= rutaImagenAmostrar.getImage();
+       //Remidencionamos
+       Image ImagenModificada= Imagen.getScaledInstance(vistaVerPerfil.imgPerfil.getWidth()-10,vistaVerPerfil.imgPerfil.getHeight()-10, java.awt.Image.SCALE_SMOOTH);
+       //Mostramos
+       rutaImagenAmostrar= new ImageIcon(ImagenModificada);
+       vistaVerPerfil.imgPerfil.setIcon(rutaImagenAmostrar);
+    }
 }

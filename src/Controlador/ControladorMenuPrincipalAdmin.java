@@ -7,6 +7,7 @@ package Controlador;
 
 import Modelo.Cliente;
 import Modelo.Empleado;
+import Vista.FrmAdministrar;
 import Vista.FrmLogin;
 import Vista.FrmMenuPrincipal;
 import Vista.FrmMenuPrincipalAdmin;
@@ -34,18 +35,18 @@ public class ControladorMenuPrincipalAdmin {
         this.vistaMenuPrincipalAdmin=vistaMenuPrincipalAdmin;
         this.activo=activo;
         this.vistaMenuPrincipalAdmin.txtUsuarioActivo.setText("Bienvenid@ Admin "+ activo.getNombre()+" "+activo.getApellido());
-        ActivarEventos();
-        InsertarImagenes();
+        InsertarImagen();
+        activarEventos();
     }
 
-    private void InsertarImagenes() {
+    private void activarEventos() {
         ActionListener acPerfiles=new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent ae) {
           //  JOptionPane.showMessageDialog(null, "Ingresaste a Perfiles");
             FrmPerfiles vistaPerfiles= new FrmPerfiles();
             Cliente nada=new Cliente();
-            ControladorPerfiles coPerfiles=new ControladorPerfiles(vistaPerfiles);
+            ControladorPerfiles coPerfiles=new ControladorPerfiles(vistaPerfiles,activo);
         }
         };
         ActionListener acReservaciones=new ActionListener() {
@@ -53,7 +54,7 @@ public class ControladorMenuPrincipalAdmin {
             public void actionPerformed(ActionEvent ae) {
 
                FrmReservaciones vistaReservaciones = new FrmReservaciones();
-               ControladorReservaciones coReservaciones = new ControladorReservaciones(vistaReservaciones,activo.getIdRecepcionista());
+               ControladorReservaciones coReservaciones = new ControladorReservaciones(vistaReservaciones,activo);
                
             }
         };
@@ -61,7 +62,7 @@ public class ControladorMenuPrincipalAdmin {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 FrmReservacion nuevaReserva = new FrmReservacion();
-                ControladorReservacion coNuevaReserva=new ControladorReservacion(nuevaReserva,activo.getIdRecepcionista());
+                ControladorReservacion coNuevaReserva=new ControladorReservacion(nuevaReserva,activo);
                 nuevaReserva.setVisible(true);
                // JOptionPane.showMessageDialog(null, "Ingresaste a NuevaReservacion");
             }
@@ -75,13 +76,21 @@ public class ControladorMenuPrincipalAdmin {
                 vistaMenuPrincipalAdmin.dispose();
             }
         };
+        ActionListener acAdministrar = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                FrmAdministrar vistaAdm = new FrmAdministrar();
+                ControladorAdministrar cAdministrar = new ControladorAdministrar(vistaAdm);
+            }
+        };
         this.vistaMenuPrincipalAdmin.btnPerfiles.addActionListener(acPerfiles);
         this.vistaMenuPrincipalAdmin.btnReservaciones.addActionListener(acReservaciones);
         this.vistaMenuPrincipalAdmin.btnNuevaReservacion.addActionListener(acNuevaReservacion);
+        this.vistaMenuPrincipalAdmin.btnAdministrador.addActionListener(acAdministrar);
         this.vistaMenuPrincipalAdmin.btnAtras.addActionListener(acAtras);
     }
 
-    private void ActivarEventos() {
+    private void InsertarImagen() {
          // PASAR A UN MODELO EN VEZ DE REPERTIR TODO ESTO VARIAS VECES
         rutaImagenAmostrar = new ImageIcon("src/IMAGENES/usuario.png");
         Image Imagen= rutaImagenAmostrar.getImage();

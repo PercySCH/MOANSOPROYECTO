@@ -7,6 +7,10 @@ package Controlador;
 
 import Modelo.Cliente;
 import Modelo.Empleado;
+import Modelo.HistorialCaja;
+import Modelo.dbconecction.CRUD;
+import Vista.DialogAbrirCaja;
+import Vista.DialogCerrarCaja;
 import Vista.FrmLogin;
 import Vista.FrmMenuPrincipal;
 import Vista.FrmReservacion;
@@ -17,6 +21,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.ResultSet;
+import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -26,17 +32,17 @@ import javax.swing.JOptionPane;
  * @author Percy
  */
 public class ControladorMenuPrincipal{
-    int idUsuariActivo;
+ 
     protected ImageIcon rutaImagenAmostrar;
-    private int option;
     protected FrmMenuPrincipal vistaMenuPrincipal;
-    private int boton;
-    private Empleado activo;
-    ControladorMenuPrincipal(FrmMenuPrincipal vistaMenuPrincipal,Empleado activo){
-        
+    private Empleado Recepcionista;
+    CRUD consulta = CRUD.getInstance();
+ 
+    ControladorMenuPrincipal(FrmMenuPrincipal vistaMenuPrincipal,int idRecepcionista){        
         this.vistaMenuPrincipal=vistaMenuPrincipal;
-        this.activo=activo;
-        this.vistaMenuPrincipal.txtUsuarioActivo.setText("Bienvenid@ "+ activo.getNombre()+" "+activo.getApellido());
+        this.Recepcionista=new Empleado();
+        Recepcionista.leerEmpleado(idRecepcionista);
+        this.vistaMenuPrincipal.txtUsuarioActivo.setText("Bienvenid@ "+ Recepcionista.getNombre()+" "+Recepcionista.getApellido());
         ActivarEventos();
         InsertarImagenes();
     }
@@ -48,7 +54,7 @@ public class ControladorMenuPrincipal{
           //  JOptionPane.showMessageDialog(null, "Ingresaste a Perfiles");
             FrmPerfiles vistaPerfiles= new FrmPerfiles();
             Cliente nada=new Cliente();
-            ControladorPerfiles coPerfiles=new ControladorPerfiles(vistaPerfiles);
+            ControladorPerfiles coPerfiles=new ControladorPerfiles(vistaPerfiles,Recepcionista);
         }
         };
         ActionListener acReservaciones=new ActionListener() {
@@ -56,7 +62,7 @@ public class ControladorMenuPrincipal{
             public void actionPerformed(ActionEvent ae) {
 
                FrmReservaciones vistaReservaciones = new FrmReservaciones();
-               ControladorReservaciones coReservaciones = new ControladorReservaciones(vistaReservaciones,activo.getIdRecepcionista());
+               ControladorReservaciones coReservaciones = new ControladorReservaciones(vistaReservaciones,Recepcionista);
                
             }
         };
@@ -64,15 +70,29 @@ public class ControladorMenuPrincipal{
             @Override
             public void actionPerformed(ActionEvent ae) {
                 FrmReservacion nuevaReserva = new FrmReservacion();
-                ControladorReservacion coNuevaReserva=new ControladorReservacion(nuevaReserva,activo.getIdRecepcionista());
+                ControladorReservacion coNuevaReserva=new ControladorReservacion(nuevaReserva,Recepcionista);
                 nuevaReserva.setVisible(true);
                // JOptionPane.showMessageDialog(null, "Ingresaste a NuevaReservacion");
+            }
+        };
+        ActionListener acCaja=new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if(Recepcionista.isCashierOpen()){
+                    DialogCerrarCaja vistaCC= new DialogCerrarCaja(vistaMenuPrincipal, true);
+                    ControladorCerrarCaja coCC = new ControladorCerrarCaja(vistaCC, Recepcionista,ControladorMenuPrincipal.this);
+                }
+                else{
+                    DialogAbrirCaja vistaAC=new DialogAbrirCaja(vistaMenuPrincipal, true);
+                    ControladorAbrirCaja coAC= new ControladorAbrirCaja(vistaAC, Recepcionista,ControladorMenuPrincipal.this);
+                    
+                }
             }
         };
         this.vistaMenuPrincipal.btnPerfiles.addActionListener(acPerfiles);
         this.vistaMenuPrincipal.btnResevaciones.addActionListener(acReservaciones);
         this.vistaMenuPrincipal.btnNuevaReservacion.addActionListener(acNuevaReservacion);
-        
+        this.vistaMenuPrincipal.btncaja.addActionListener(acCaja);
         this.vistaMenuPrincipal.lblAtras.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent me) {
@@ -137,5 +157,15 @@ public class ControladorMenuPrincipal{
        //Mostramos
        rutaImagenAmostrar= new ImageIcon(ImagenModificada);
        vistaMenuPrincipal.lblAtras.setIcon(rutaImagenAmostrar);
+       
+       if(Recepcionista.isCashierOpen()) rutaImagenAmostrar = new ImageIcon("src/IMAGENES/cash-register-green.png");
+       else  rutaImagenAmostrar = new ImageIcon("src/IMAGENES/cash-register-red.png");
+       Imagen= rutaImagenAmostrar.getImage();
+       //Remidencionamos
+        ImagenModificada= Imagen.getScaledInstance(vistaMenuPrincipal.btncaja.getWidth(), vistaMenuPrincipal.btncaja.getHeight(), java.awt.Image.SCALE_SMOOTH);
+       //Mostramos
+       rutaImagenAmostrar= new ImageIcon(ImagenModificada);
+       vistaMenuPrincipal.btncaja.setIcon(rutaImagenAmostrar);
+       
     }
 }

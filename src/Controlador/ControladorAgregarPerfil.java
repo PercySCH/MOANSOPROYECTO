@@ -6,16 +6,18 @@
 package Controlador;
 
 import Modelo.Cliente;
+import Modelo.Empleado;
+import Modelo.ReporteRecepcionista;
+import Modelo.ReporteReservacion;
 import Modelo.dbconecction.CRUD;
 import Vista.FrmVerPerfil;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Date;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -27,18 +29,22 @@ public class ControladorAgregarPerfil {
     protected FrmVerPerfil vistaAgregarPerfil;
     protected CRUD consulta = CRUD.getInstance();
     protected ResultSet rs;
+    protected Empleado Recepcionista;
     private int id;
     
-    public ControladorAgregarPerfil(FrmVerPerfil vistaAgregarPerfil){
+    public ControladorAgregarPerfil(FrmVerPerfil vistaAgregarPerfil,Empleado Recepcionista){
         this.vistaAgregarPerfil=vistaAgregarPerfil;
+        this.Recepcionista=Recepcionista;
         try{
         rs = consulta.select("SELECT MAX(idCliente) FROM cliente");
                     rs.next();
                     id= rs.getInt(1) + 1;
         }catch(Exception ex){
+            id=1;
         }
         vistaAgregarPerfil.txtcodigo.setText(id+"");
         InsertarEventos();
+        insertarImagen();
     }
     public void InsertarEventos(){
         vistaAgregarPerfil.btnAgregar.addActionListener(new ActionListener() {
@@ -58,7 +64,19 @@ public class ControladorAgregarPerfil {
                             vistaAgregarPerfil.txttelefono.getText(),
                             genero,
                             vistaAgregarPerfil.txtdni.getText());
-                            consulta.insert("INSERT INTO CLIENTE VALUES ("+nuevoCliente.statementAgregar()+")");
+                            
+                            nuevoCliente.createCliente();
+                            int idReporteRecepcionista=1;
+                            try{
+                                    ResultSet rs=consulta.select("select MAX(idReporteRecepcionistas) from reporterecepcionistas");
+                                rs.next();
+                                idReporteRecepcionista=rs.getInt(1)+1;
+                            }catch(Exception ex){
+                                idReporteRecepcionista=1;
+                            }
+                            ReporteRecepcionista nuevoReporte= new ReporteRecepcionista(idReporteRecepcionista, Recepcionista.getIdRecepcionista(),"Registro al nuevo Perfil:" + nuevoCliente.getNombres()+" "+nuevoCliente.getApellidos(),new Date());
+                            nuevoReporte.createReporteRecepcionista();
+
                             vistaAgregarPerfil.dispose();             
                     
                     } catch (Exception ex) {
@@ -87,5 +105,15 @@ public class ControladorAgregarPerfil {
            return false; 
         }
         return true;
+    }
+
+    private void insertarImagen() {
+       ImageIcon rutaImagenAmostrar = new ImageIcon("src/IMAGENES/usuario.png");
+       Image Imagen= rutaImagenAmostrar.getImage();
+       //Remidencionamos
+       Image ImagenModificada= Imagen.getScaledInstance(vistaAgregarPerfil.imgPerfil.getWidth()-10,vistaAgregarPerfil.imgPerfil.getHeight()-10, java.awt.Image.SCALE_SMOOTH);
+       //Mostramos
+       rutaImagenAmostrar= new ImageIcon(ImagenModificada);
+       vistaAgregarPerfil.imgPerfil.setIcon(rutaImagenAmostrar);
     }
 }

@@ -27,8 +27,8 @@ public class ControladorPrincipal {
     }*/
     javax.swing.UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
                    
-    FrmLogin vistaLogin = new FrmLogin();
-    ControladorLogin clogin = new ControladorLogin(vistaLogin);
+    FrmLogin vistaLogin = new FrmLogin(); //Vista
+    ControladorLogin clogin = new ControladorLogin(vistaLogin); // Controlador controla la vista
     vistaLogin.setVisible(true);
     
     }

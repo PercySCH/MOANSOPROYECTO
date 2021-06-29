@@ -6,6 +6,7 @@
 package Controlador;
 
 import Modelo.Cliente;
+import Modelo.Empleado;
 import Modelo.dbconecction.CRUD;
 import Vista.FrmVerPerfil;
 import Vista.FrmLogin;
@@ -38,10 +39,11 @@ public class ControladorPerfiles {
     private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     private ArrayList<Cliente> clientes;
     private DefaultTableModel tabla;
+    private Empleado Recepcionista;
     //private Cliente retornar;
     private ControladorReservacion controladorNR;
-    public ControladorPerfiles(FrmPerfiles vistaFrmPerfiles) {
-        
+    public ControladorPerfiles(FrmPerfiles vistaFrmPerfiles,Empleado Recepcionista) {
+        this.Recepcionista=Recepcionista;
         this.vistaPerfiles=vistaFrmPerfiles;
         tabla=getTablaClientes();
         this.vistaPerfiles.jTable1.setModel(tabla);
@@ -51,7 +53,8 @@ public class ControladorPerfiles {
         InsertarImagenes();
         this.vistaPerfiles.setVisible(true);
     }
-    public ControladorPerfiles(FrmPerfiles vistaFrmPerfiles,Cliente retornar,ControladorReservacion controladorNR){
+    public ControladorPerfiles(FrmPerfiles vistaFrmPerfiles,Cliente retornar,ControladorReservacion controladorNR,Empleado Recepcionista){
+        this.Recepcionista=Recepcionista;
         this.vistaPerfiles=vistaFrmPerfiles;
         this.controladorNR=controladorNR;
         tabla=getTablaClientes();
@@ -102,13 +105,14 @@ public class ControladorPerfiles {
             datos[4] = clientes.get(i).getDireccion();
             datos[5] = clientes.get(i).getTelefono();
             
-            datos[6] = String.valueOf(clientes.get(i).getGenero());
+            if(clientes.get(i).getGenero()==1) datos[6] = "Masculino";
+            else if(clientes.get(i).getGenero()==2) datos[6] = "Femenino";
+            
             
             datos[7] = String.valueOf(clientes.get(i).getDNI());
             
             
             DTM.addRow(datos);
-            System.out.println(datos[2]);
         }
 	return DTM;
     }
@@ -143,7 +147,7 @@ public class ControladorPerfiles {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 FrmVerPerfil vistaAgregarPerfil=new FrmVerPerfil();
-                ControladorAgregarPerfil controlador=new ControladorAgregarPerfil(vistaAgregarPerfil);
+                ControladorAgregarPerfil controlador=new ControladorAgregarPerfil(vistaAgregarPerfil,Recepcionista);
                 vistaAgregarPerfil.setVisible(true);
             }
         });
@@ -170,6 +174,7 @@ public class ControladorPerfiles {
                 }
                 for(int i=0;i<clientes.size();i++){
                     if(clientes.get(i).getNombres().toUpperCase().contains(vistaPerfiles.jTextField1.getText().toUpperCase())){
+                    
                     String[] datos= new String[8];
                     datos[0] = String.valueOf(clientes.get(i).getIdCliente());
                     datos[1] = clientes.get(i).getNombres();
@@ -177,9 +182,8 @@ public class ControladorPerfiles {
                     datos[3] = dateFormat.format( clientes.get(i).getFechaNac() );
                     datos[4] = clientes.get(i).getDireccion();
                     datos[5] = clientes.get(i).getTelefono();
-
-                    datos[6] = String.valueOf(clientes.get(i).getGenero());
-
+                    if(clientes.get(i).getGenero()==1) datos[6] = "Masculino";
+                    else if(clientes.get(i).getGenero()==2) datos[6] = "Femenino";
                     datos[7] = String.valueOf(clientes.get(i).getDNI());
 
 

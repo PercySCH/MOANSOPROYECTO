@@ -42,6 +42,7 @@ public final class ControladorLogin implements ActionListener{
             public void mouseClicked(MouseEvent me) {
                 timer.cancel();
                 vista.dispose();
+      //          vista.setDefaultCloseOperation();
             }
 
             @Override
@@ -90,8 +91,8 @@ public final class ControladorLogin implements ActionListener{
        
     }
     public void InsertarLogo(){
-        rutaImagenAmostrar = new ImageIcon("src/IMAGENES/logopng.png");
-        Image Imagen= rutaImagenAmostrar.getImage();
+       rutaImagenAmostrar = new ImageIcon("src/IMAGENES/logopng.png");
+       Image Imagen= rutaImagenAmostrar.getImage();
        //Remidencionamos
        Image ImagenModificada= Imagen.getScaledInstance(250, 250, java.awt.Image.SCALE_SMOOTH);
        //Mostramos
@@ -113,7 +114,7 @@ public final class ControladorLogin implements ActionListener{
             else if(activo.getIdRol()==2){
                 //pasar al siguiente formulario
               FrmMenuPrincipal vistaMP=new FrmMenuPrincipal();
-              ControladorMenuPrincipal contrMP= new ControladorMenuPrincipal(vistaMP,activo);
+              ControladorMenuPrincipal contrMP= new ControladorMenuPrincipal(vistaMP,activo.getIdRecepcionista());
               vistaMP.setVisible(true);
               vista.dispose();
             

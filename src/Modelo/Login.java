@@ -54,7 +54,7 @@ public class Login {
             System.out.println(activo.getNombre());
             activo.setApellido(rs.getString(3));
             System.out.println(activo.getApellido());
-            activo.setIdRol(rs.getInt(9));
+            activo.setIdRol(rs.getInt(10));
                 System.out.println(activo.getIdRol());
             }
             else{

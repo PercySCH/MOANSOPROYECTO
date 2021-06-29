@@ -42,6 +42,7 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
         txtUsuarioActivo = new javax.swing.JLabel();
         btnNuevaReservacion = new javax.swing.JButton();
         lblAtras = new javax.swing.JLabel();
+        btncaja = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -136,6 +137,14 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
         lblAtras.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jPanel1.add(lblAtras, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 110, 120));
 
+        btncaja.setText("Abrir Caja");
+        btncaja.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btncajaActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btncaja, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 40, 110, 110));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -158,10 +167,15 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnNuevaReservacionActionPerformed
 
+    private void btncajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncajaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btncajaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnNuevaReservacion;
     public javax.swing.JButton btnPerfiles;
     public javax.swing.JButton btnResevaciones;
+    public javax.swing.JButton btncaja;
     private javax.swing.JPanel jPanel1;
     public javax.swing.JPanel jPanel5;
     public javax.swing.JPanel jPanel7;

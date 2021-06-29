@@ -6,6 +6,7 @@
 package Controlador;
 
 import Modelo.Cliente;
+import Modelo.Empleado;
 import Modelo.Reservacion;
 import Modelo.dbconecction.CRUD;
 import Vista.FrmReservacion;
@@ -17,6 +18,8 @@ import java.*;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.DateFormat;
@@ -37,72 +40,66 @@ public class ControladorReservaciones {
     List<Reservacion> listaReservaciones; 
     CRUD consulta= CRUD.getInstance();
     public FrmReservaciones vistaReservaciones;
-    public int idRecepcionista;
-    public ControladorReservaciones(FrmReservaciones vistaReservaciones,int idRecepcionista) {
+    public Empleado Recepcionista;
+    private DefaultTableModel DTM;
+    DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");  
+    public ControladorReservaciones(FrmReservaciones vistaReservaciones,Empleado Recepcionista) {
         this.vistaReservaciones=vistaReservaciones;
-        this.idRecepcionista=idRecepcionista;
+        this.Recepcionista=Recepcionista;
         popularTabla();
         insertarEventos();
         insertarImagenes();
         vistaReservaciones.setVisible(true);
     }
     public void popularTabla(){
-        DefaultTableModel DTM = new DefaultTableModel() {
+        DTM = new DefaultTableModel() {
 	    @Override
 	    public boolean isCellEditable(int row, int column) {
 		return false;
 	    }
 	};
-	String[] headers = {"NroConfirmacion", "fechaLlegada", "fechaSalida", "tipoPago", "estado","Habitacion", "cantPersonas", "idRecepcionista", "Cliente"};
+	String[] headers = {"NroConfirmacion","Cliente", "fechaLlegada", "fechaSalida", "tipoPago", "estado","Habitacion", "cantPersonas", "idRecepcionista"};
 	for (String i : headers) {
 	    DTM.addColumn(i);
 	}
         listaReservaciones = new ArrayList<>();
-	ResultSet rs = consulta.select("SELECT * FROM reservacion");
+	ResultSet rs = consulta.select("SELECT nroConfirmacion FROM reservacion");
 	try {
 	    while (rs.next()) {
-               Reservacion nueva =new Reservacion(rs.getInt(1),
-                       new java.util.Date(rs.getDate(2).getTime()), 
-                       new java.util.Date(rs.getDate(3).getTime()), 
-                       rs.getInt(4),
-                       rs.getInt(5),
-                       rs.getInt(6),
-                       rs.getInt(7),
-                       rs.getInt(8),
-                       rs.getInt(9)
-                       );
+               Reservacion nueva = new Reservacion();
+               nueva.LeerReservacion(rs.getInt(1));
                listaReservaciones.add(nueva);
 	    }
 	} catch (SQLException ex) {
 	    JOptionPane.showMessageDialog(null, "Error:\n" + ex);
 	}  
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");  
+        
         for(int i=0;i<listaReservaciones.size();i++){
             String[] datos= new String[9];
             datos[0] = listaReservaciones.get(i).getIdReservacion()+"";
-            datos[1] = dateFormat.format( listaReservaciones.get(i).getFechaLlegada() );
-            datos[2] = dateFormat.format( listaReservaciones.get(i).getFechaSalida());
-            datos[3] = listaReservaciones.get(i).getTipoPago()+"";
+            datos[2] = dateFormat.format( listaReservaciones.get(i).getFechaLlegada() );
+            datos[3] = dateFormat.format( listaReservaciones.get(i).getFechaSalida());
+            datos[4] = listaReservaciones.get(i).getTipoPago()+"";
             
             
             if(listaReservaciones.get(i).getEstado()==1){
-                 datos[4] = "EN ESPERA";
+                 datos[5] = "EN ESPERA";
             }
             else if(listaReservaciones.get(i).getEstado()==2){
-                datos[4] = "ADENTRO";
+                datos[5] = "ADENTRO";
             }
             else{
-                datos[4] = "TERMINO";
+                datos[5] = "TERMINO";
             }
-            datos[5] = listaReservaciones.get(i).getIdHabitacion()+"";
+            datos[6] = listaReservaciones.get(i).getIdHabitacion()+"";
             
-            datos[6] = listaReservaciones.get(i).getCantPersonas()+"";
+            datos[7] = listaReservaciones.get(i).getCantPersonas()+"";
             
-            datos[7] = listaReservaciones.get(i).getIdRecepcionista()+"";
+            datos[8] = listaReservaciones.get(i).getIdRecepcionista()+"";
             rs = consulta.select("select * from cliente where idCliente="+ listaReservaciones.get(i).getIdCliente());
             try{
             rs.next();
-            datos[8] = rs.getString(2)+" "+rs.getString(3);
+            datos[1] = rs.getString(2)+" "+rs.getString(3);
             }catch(SQLException ex){
                 
             }           
@@ -122,7 +119,7 @@ public class ControladorReservaciones {
                vistaVP.setVisible(true);*/
                 int idR = Integer.parseInt((String) vistaReservaciones.jTable1.getValueAt(vistaReservaciones.jTable1.getSelectedRow(), 0));
                 FrmReservacion vistaReservacion = new FrmReservacion();
-                ControladorReservacion contrRs= new ControladorReservacion(vistaReservacion,idRecepcionista,idR , ControladorReservaciones.this);
+                ControladorReservacion contrRs= new ControladorReservacion(vistaReservacion,Recepcionista,idR , ControladorReservaciones.this);
                 
             }
 
@@ -177,9 +174,57 @@ public class ControladorReservaciones {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 FrmReservacion vistaNR= new FrmReservacion();
-                ControladorReservacion contrR=new ControladorReservacion(vistaNR, idRecepcionista);
+                ControladorReservacion contrR=new ControladorReservacion(vistaNR, Recepcionista);
                 vistaNR.setVisible(true);
 
+            }
+        });
+        
+        vistaReservaciones.jTextField1.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent ke) {
+                
+            }
+
+            @Override
+            public void keyPressed(KeyEvent ke) {
+                
+            }
+
+            @Override
+            public void keyReleased(KeyEvent ke) {
+                 DTM= new DefaultTableModel();
+                vistaReservaciones.jTable1.removeAll();
+                String[] headers = {"NroConfirmacion","Cliente", "fechaLlegada", "fechaSalida", "tipoPago", "estado","Habitacion", "cantPersonas", "idRecepcionista"};
+                for (String i : headers) {
+                    DTM.addColumn(i);
+                }
+                for(int i=0;i<listaReservaciones.size();i++){
+                    if(listaReservaciones.get(i).obtenerNombreCliente().toUpperCase().contains(vistaReservaciones.jTextField1.getText().toUpperCase())){
+                    String[] datos= new String[9];
+                    datos[0] = listaReservaciones.get(i).getIdReservacion()+"";
+                    datos[2] = dateFormat.format( listaReservaciones.get(i).getFechaLlegada() );
+                    datos[3] = dateFormat.format( listaReservaciones.get(i).getFechaSalida());
+                    datos[4] = listaReservaciones.get(i).getTipoPago()+"";
+                    if(listaReservaciones.get(i).getEstado()==1){
+                            datos[5] = "EN ESPERA";
+                       }
+                       else if(listaReservaciones.get(i).getEstado()==2){
+                           datos[5] = "ADENTRO";
+                       }
+                       else{
+                           datos[5] = "TERMINO";
+                       }
+                       datos[6] = listaReservaciones.get(i).getIdHabitacion()+"";
+
+                       datos[7] = listaReservaciones.get(i).getCantPersonas()+"";
+
+                       datos[8] = listaReservaciones.get(i).getIdRecepcionista()+"";
+                       datos[1] = listaReservaciones.get(i).obtenerNombreCliente();
+                        DTM.addRow(datos);
+                    }
+                }
+                vistaReservaciones.jTable1.setModel(DTM);
             }
         });
     }

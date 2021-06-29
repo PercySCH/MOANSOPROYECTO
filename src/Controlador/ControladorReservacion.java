@@ -6,7 +6,10 @@
 package Controlador;
 
 import Modelo.Cliente;
+import Modelo.Convertidor;
+import Modelo.Empleado;
 import Modelo.Habitacion;
+import Modelo.ReporteReservacion;
 import Modelo.Reservacion;
 import Modelo.Tarifa;
 import Modelo.Tarifario;
@@ -14,6 +17,7 @@ import Modelo.Tipo;
 import Modelo.dbconecction.CRUD;
 import Vista.FrmLogin;
 import Vista.FrmMenuPrincipal;
+import Vista.FrmPagos2;
 import Vista.FrmReservacion;
 import Vista.FrmPerfiles;
 import Vista.FrmVerHabitaciones;
@@ -47,99 +51,73 @@ public class ControladorReservacion {
     private ImageIcon rutaImagenAmostrar;
     CRUD consulta= CRUD.getInstance();
     List<Tipo> listaTipos= new ArrayList<>();
-    private int nroconfirmacion;
-    private List<Tarifa> listaTarifas;
+ 
+   // private List<Tarifa> listaTarifas;
     private Cliente cl=new Cliente();
     private Date fechaEntrada=new Date();  
     private Date auxFecha=new Date();  
     private Date fechaSalida=new Date();  
-    private int idRecepcionista=0;
+    private Empleado Recepcionista;
     private String strFechaEntrada;
     private String strFechaSalida;
     private Reservacion nueva;
+    private int idTipo;
     private Habitacion seleccionada;
-    public ControladorReservacion(FrmReservacion vistaNuevaReserva,int idRecepcionista) {
+    private int nroconfirmacion;
+    ControladorReservaciones controladorReservaciones;
+    public ControladorReservacion(FrmReservacion vistaNuevaReserva,Empleado Recepcionista) {
         
         this.vistaNuevaReserva=vistaNuevaReserva;
-        this.idRecepcionista=idRecepcionista;
+        this.Recepcionista=Recepcionista;
+        
         try{
             ResultSet rs;
         rs = consulta.select("SELECT MAX(NroConfirmacion) FROM reservacion");
                     rs.next();
                     nroconfirmacion= rs.getInt(1) + 1;
         }catch(Exception ex){
-            nroconfirmacion=1;
+            nroconfirmacion=0;
         }
+        nueva= new Reservacion();
+        nueva.setIdReservacion(Recepcionista.getIdRecepcionista());
         InsertarImagenes();
         InsertarValoresCB();
         InsertarEventos();
+        InsertarEventoAceptarCreate();
     }
-    public ControladorReservacion(FrmReservacion vistaNuevaReserva,int idRecepcionista,int reservaActual, ControladorReservaciones controladorReservaciones) {
+    public ControladorReservacion(FrmReservacion vistaNuevaReserva,Empleado idRecepcionista,int reservaActual, ControladorReservaciones controladorReservaciones) {
          
              this.vistaNuevaReserva=vistaNuevaReserva;
-             this.idRecepcionista=idRecepcionista;
+             this.Recepcionista=idRecepcionista;
+             this.controladorReservaciones= controladorReservaciones;
              //Llenar los campos con los de reservacion
              
              InsertarImagenes();
              InsertarValoresCB();
              InsertarEventos();
              InsertarDatosReservaActual(reservaActual);
+             InsertarEventoAceptarUpdate();
              vistaNuevaReserva.setVisible(true);
          
     }
     public void InsertarDatosReservaActual(int reservaActual){
-         Reservacion actual = null;
-         try {
-        ResultSet rs;
-        rs = consulta.select("select * from reservacion where NroConfirmacion = \""+reservaActual+"\"");
-        rs.next();
-        actual = new Reservacion(
-                rs.getInt(1), 
-                new java.util.Date(rs.getDate(2).getTime()),
-                new java.util.Date(rs.getDate(3).getTime()),
-                rs.getInt(4),
-                rs.getInt(5),
-                rs.getInt(6), 
-                rs.getInt(7),
-                rs.getInt(8),
-                rs.getInt(9));
-        rs=consulta.select("select * from cliente where idCliente = "+actual.getIdCliente());
-        rs.next();
-        cl = new Cliente(
-            rs.getInt(1),
-            rs.getString(2),
-            rs.getString(3),
-            (new java.util.Date(rs.getDate(4).getTime())),
-            rs.getString(5),
-            rs.getString(6),
-            rs.getInt(7),
-            rs.getString(8)
-        );
-        rs= consulta.select("select * from habitacion where nrohabitacion="+actual.getIdHabitacion());
-        rs.next();
-        seleccionada= new Habitacion(
-                rs.getInt(1),
-                rs.getInt(2),
-                true, true,rs.getInt(5),
-                rs.getInt(6));
         
-        } catch (SQLException ex) {
-             Logger.getLogger(ControladorReservacion.class.getName()).log(Level.SEVERE, null, ex);
-         }
-        
+        nueva=new Reservacion();
+        nueva.LeerReservacion(reservaActual);
+        cl = new Cliente();
+        cl.leerCliente(nueva.getIdCliente());
         vistaNuevaReserva.txtperfil.setText(cl.getNombres()+" "+cl.getApellidos());
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");  
-        strFechaEntrada = formatter.format(actual.getFechaLlegada());
+        strFechaEntrada = formatter.format(nueva.getFechaLlegada());
         System.out.println(strFechaEntrada);
-        strFechaSalida = formatter.format(actual.getFechaSalida());
+        strFechaSalida = formatter.format(nueva.getFechaSalida());
         vistaNuevaReserva.txtfechaentrada.setText(strFechaEntrada);
         vistaNuevaReserva.txtfechasalida.setText(strFechaSalida);
-        vistaNuevaReserva.cbtipo.setSelectedIndex(seleccionada.getIdTipoHabitacion()-1);
-        vistaNuevaReserva.cbMetodoPago.setSelectedIndex(actual.getTipoPago()-1);
-        vistaNuevaReserva.txtNroHabitacion.setText(actual.getIdHabitacion()+"");
-        vistaNuevaReserva.spnCantidad.setValue(actual.getCantPersonas());   
-        refrescarPrecio();
-        nueva=actual;
+        vistaNuevaReserva.cbtipo.setSelectedIndex(nueva.getIdTipoHabitacion()-1);
+        vistaNuevaReserva.cbMetodoPago.setSelectedIndex(nueva.getTipoPago()-1);
+        vistaNuevaReserva.txtpreciototal.setText(nueva.precioTotal()+"");
+        vistaNuevaReserva.txtNroHabitacion.setText(nueva.getIdHabitacion()+"");
+        vistaNuevaReserva.spnCantidad.setValue(nueva.getCantPersonas());   
     }
     public void InsertarEventos(){
         this.vistaNuevaReserva.lblAtras4.addMouseListener(new MouseListener() {
@@ -171,14 +149,25 @@ public class ControladorReservacion {
         this.vistaNuevaReserva.cbtipo.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent ie) {
-               refrescarPrecio();
+               
+               nueva.setFechaLlegada(Convertidor.StrToDate(vistaNuevaReserva.txtfechaentrada.getText()));
+               nueva.setFechaSalida(Convertidor.StrToDate(vistaNuevaReserva.txtfechasalida.getText()));
+               nueva.setIdTipoHabitacion(vistaNuevaReserva.cbtipo.getSelectedIndex()+1);
+               nueva.obtenerTarifas();
+               vistaNuevaReserva.txtpreciototal.setText(nueva.precioTotal()+"");
+            }
+        });
+        this.vistaNuevaReserva.cbMetodoPago.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent ie) {
+                nueva.setTipoPago(vistaNuevaReserva.cbMetodoPago.getSelectedIndex() +1);
             }
         });
         this.vistaNuevaReserva.btnBuscarPerfil.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 FrmPerfiles vistaP= new FrmPerfiles();
-                ControladorPerfiles contrP= new ControladorPerfiles(vistaP, cl,ControladorReservacion.this);
+                ControladorPerfiles contrP= new ControladorPerfiles(vistaP, cl,ControladorReservacion.this,Recepcionista);
             }
         });
         this.vistaNuevaReserva.btnvermas.addActionListener(new ActionListener() {
@@ -186,37 +175,12 @@ public class ControladorReservacion {
             public void actionPerformed(ActionEvent ae) {
                 try{
                 FrmVerTarifas vistaVT=new FrmVerTarifas(vistaNuevaReserva, true);
-                ControladorVerTarifas controladorVT= new ControladorVerTarifas(vistaVT, listaTarifas);
+                ControladorVerTarifas controladorVT= new ControladorVerTarifas(vistaVT, nueva.getTarifas());
                 }catch(Exception ex){
                      JOptionPane.showMessageDialog(null, "Por favor ingrese las fechas de forma correcta");
                 }
             }
-        });
-        this.vistaNuevaReserva.btnaceptar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                if(datosCompletosyValidados()){
-                    int nrohab;
-                    
-                    System.out.println((Integer) vistaNuevaReserva.spnCantidad.getValue()+"");
-                    if( vistaNuevaReserva.txtNroHabitacion.getText().compareTo("")==0){
-                         nueva= new Reservacion(nroconfirmacion, fechaEntrada, fechaSalida, (vistaNuevaReserva.cbMetodoPago.getSelectedIndex() + 1) , 1  ,
-                          (Integer) vistaNuevaReserva.spnCantidad.getValue()  , idRecepcionista, cl.getIdCliente());
-                    }
-                    else{
-                        nrohab = Integer.parseInt(vistaNuevaReserva.txtNroHabitacion.getText());
-                        nueva= new Reservacion(nroconfirmacion, fechaEntrada, fechaSalida, (vistaNuevaReserva.cbMetodoPago.getSelectedIndex() + 1) , 1 ,nrohab ,
-                          (Integer) vistaNuevaReserva.spnCantidad.getValue()  , idRecepcionista, cl.getIdCliente());
-                    }
-                    nueva.InsertarRevervacion();
-                    vistaNuevaReserva.dispose();
-                }
-                else{
-                     JOptionPane.showMessageDialog(null, "Por favor Rellene todos los datos");
-                }     
-            }
-        });
-        
+        });    
         this.vistaNuevaReserva.btnVerHabitaciones.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -231,8 +195,24 @@ public class ControladorReservacion {
         this.vistaNuevaReserva.btnCheckIn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                nueva.setTipoPago(vistaNuevaReserva.cbMetodoPago.getSelectedIndex()+1);
+                nueva.setCantPersonas((int)vistaNuevaReserva.spnCantidad.getValue());
+                nueva.setIdCliente(cl.getIdCliente());
+                nueva.setIdHabitacion( Integer.parseInt(vistaNuevaReserva.txtNroHabitacion.getText()) );
                 nueva.CheckIn();
                 nueva.UpdateReservacion();
+                controladorReservaciones.popularTabla();
+                int idReporteReservaciones=1;
+                    try{
+                        ResultSet rs=consulta.select("select MAX(idReporteReservaciones) from ReporteReservaciones");
+                        rs.next();
+                        idReporteReservaciones=rs.getInt(1)+1;
+                    }catch(Exception ex){
+                        idReporteReservaciones=1;
+                    }
+                    ReporteReservacion nuevoReporte= new ReporteReservacion(idReporteReservaciones, nueva.getNroConfirmacion(),"Realizo Check In" 
+                            , cl.getIdCliente(),Recepcionista.getIdRecepcionista(), new Date());
+                    nuevoReporte.createReporteReservacion();
                 vistaNuevaReserva.dispose();
             }
         });
@@ -243,12 +223,26 @@ public class ControladorReservacion {
                 nueva.CheckOut();
                 nueva.UpdateReservacion();
                 vistaNuevaReserva.dispose();
+                controladorReservaciones.popularTabla();
+                int idReporteReservaciones=1;
+                    try{
+                        ResultSet rs=consulta.select("select MAX(idReporteReservaciones) from ReporteReservaciones");
+                        rs.next();
+                        idReporteReservaciones=rs.getInt(1)+1;
+                    }catch(Exception ex){
+                        idReporteReservaciones=1;
+                    }
+                    ReporteReservacion nuevoReporte= new ReporteReservacion(idReporteReservaciones, nueva.getNroConfirmacion(),"Realizo Check Out" 
+                            , cl.getIdCliente(),Recepcionista.getIdRecepcionista(), new Date());
+                    nuevoReporte.createReporteReservacion();
             }
         });
         this.vistaNuevaReserva.btnBalance.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                //
+                FrmPagos2 vistaPagos= new FrmPagos2();
+                ControladorPagos controllerPagos=  new ControladorPagos(vistaPagos,nueva, Recepcionista);
+                vistaPagos.setVisible(true);
             }
         });
     }
@@ -263,6 +257,15 @@ public class ControladorReservacion {
        //Mostramos
        rutaImagenAmostrar= new ImageIcon(ImagenModificada);
        vistaNuevaReserva.lblAtras4.setIcon(rutaImagenAmostrar);
+       
+        rutaImagenAmostrar = new ImageIcon("src/IMAGENES/reservaciones.png");
+         Imagen= rutaImagenAmostrar.getImage();
+       //Remidencionamos
+        ImagenModificada= Imagen.getScaledInstance(vistaNuevaReserva.imgReservacion.getHeight(), vistaNuevaReserva.imgReservacion.getWidth(), java.awt.Image.SCALE_SMOOTH);
+       //Mostramos
+       rutaImagenAmostrar= new ImageIcon(ImagenModificada);
+       vistaNuevaReserva.imgReservacion.setIcon(rutaImagenAmostrar);
+       
     }
     public void InsertarValoresCB(){
         ResultSet rs;
@@ -279,84 +282,82 @@ public class ControladorReservacion {
             this.vistaNuevaReserva.cbtipo.addItem(t.getNombre());
         }
     }
-    public void refrescarPrecio(){
-               // TOMAR EN CUENTA EL REFRESCAR PRECIO DEBE GUIARSE DE LOS TARIFARIOS, PERO SI LA RESERVACION TIENE UNA TARIFA PERSONALIZADA 
-               // SE TIENE QUE MOSTRAR LA PERSONALIZADA NO LA DEL TARIFARIO
-                try {
-                    fechaEntrada = new SimpleDateFormat("dd-MM-yyyy").parse(vistaNuevaReserva.txtfechaentrada.getText());
-                    auxFecha = new SimpleDateFormat("dd-MM-yyyy").parse(vistaNuevaReserva.txtfechaentrada.getText());               
-                    fechaSalida = new SimpleDateFormat("dd-MM-yyyy").parse(vistaNuevaReserva.txtfechasalida.getText());
-                } catch (ParseException ex) {
-                    System.out.println(fechaEntrada.toString());
-                    System.out.println(fechaSalida.toString());
-                }
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
-                 strFechaEntrada = formatter.format(fechaEntrada);
-                //System.out.println(strFechaEntrada);
-                 strFechaSalida = formatter.format(fechaSalida);
-               // System.out.println(strFechaSalida);
-                int idTipo= listaTipos.get(vistaNuevaReserva.cbtipo.getSelectedIndex()).getCodigoTipo();
-                String qery="select * from tarifario where Tipo_idTipoHabitacion=" + idTipo + " and fecha>=\""+strFechaEntrada+"\" and fecha<\""+strFechaSalida+"\"";
-                System.out.println(qery);
-                ResultSet rs = consulta.select(qery);
-               // System.out.println("salio bien");
-                List<Tarifario> listaTarifarios=new ArrayList<>();
-                listaTarifas=new ArrayList<>();
-                try {
-                    while(rs.next()){
-                        Tarifario nuevo=new Tarifario(rs.getInt(1), new java.util.Date(rs.getDate(2).getTime()), rs.getFloat(3));
-                        listaTarifarios.add(nuevo);
-                     
-                        /*Calendar c = Calendar.getInstance(); 
-                        c.setTime(fechaEntrada); 
-                        c.add(Calendar.DATE, 1);
-                        fechaEntrada = c.getTime();*/
-                    }
-                    
-                } catch (SQLException ex) {
-                  
-                }
-                try{
-                                    ResultSet rs2 = consulta.select("select * from tarifariodefecto where Tipo_idTipoHabitacion ="+ idTipo);
-                                        rs2.next();
-                                    int id=rs2.getInt(1);
-                                    float precio = rs2.getFloat(2);
-                                    
-                                    do{
-                                         
-                                        Tarifario nuevo= new Tarifario(id,auxFecha,precio);
-                                        listaTarifarios.add(nuevo);
-                                        System.out.println("se agrego la fecha " + auxFecha);
-                                        Calendar c = Calendar.getInstance(); 
-                                        c.setTime(auxFecha); 
-                                        c.add(Calendar.DATE, 1);
-                                        auxFecha = c.getTime();
-                                    }while(auxFecha.getTime()<auxFecha.getTime());
-                                    
-                                    
-
-                            
-                    }catch(SQLException ex2){
-                            System.out.println("no se pudo conseguir tarifariodefecto");
-                     }
-                float preciototal=0;
-                for(Tarifario t:listaTarifarios){
-                    Tarifa nuevo= new Tarifa(t.getIdTipoHabitacion(), nroconfirmacion, t.getFecha(), t.getPrecio());
-                    System.out.println(nuevo.getFecha().toString());
-                    listaTarifas.add(nuevo);
-                    preciototal+=nuevo.getPrecio();
-                }
-                vistaNuevaReserva.txtpreciototal.setText(preciototal+"");
-    }
     public Boolean datosCompletosyValidados(){
         if(vistaNuevaReserva.txtperfil.getText().compareTo("")==0 ||
            vistaNuevaReserva.txtfechaentrada.getText().compareTo("")==0 ||
            vistaNuevaReserva.txtfechasalida.getText().compareTo("")==0 ||
-           vistaNuevaReserva.txtpreciototal.getText().compareTo("")==0 ||
-           vistaNuevaReserva.txtNroHabitacion.getText().compareTo("")==0
+           vistaNuevaReserva.txtpreciototal.getText().compareTo("")==0 
+          /* vistaNuevaReserva.txtNroHabitacion.getText().compareTo("")==0*/
                 ){
             return false;
         }
         else return true;
+    }
+
+    private void InsertarEventoAceptarCreate() {
+         this.vistaNuevaReserva.btnaceptar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if(datosCompletosyValidados()){
+                    nueva.setIdRecepcionista(Recepcionista.getIdRecepcionista());
+                    nueva.setTipoPago(vistaNuevaReserva.cbMetodoPago.getSelectedIndex()+1);
+                    nueva.setNroConfirmacion(nroconfirmacion);
+                    nueva.setCantPersonas((int)vistaNuevaReserva.spnCantidad.getValue());
+                    nueva.setIdCliente(cl.getIdCliente());
+                    nueva.setIdHabitacion( Integer.parseInt(vistaNuevaReserva.txtNroHabitacion.getText()) );
+                    nueva.setEstado(1);
+                    nueva.CreateReservacion();
+                    int idReporteReservaciones=1;
+                    try{
+                        ResultSet rs=consulta.select("select MAX(idReporteReservaciones) from ReporteReservaciones");
+                        rs.next();
+                        idReporteReservaciones=rs.getInt(1)+1;
+                    }catch(Exception ex){
+                        idReporteReservaciones=1;
+                    }
+                    ReporteReservacion nuevoReporte= new ReporteReservacion(idReporteReservaciones, nroconfirmacion,"Realizo una reservacion", nueva.getIdCliente(),Recepcionista.getIdRecepcionista(), new Date());
+                    nuevoReporte.createReporteReservacion();
+                    vistaNuevaReserva.dispose();
+                        
+                }
+                else{
+                     JOptionPane.showMessageDialog(null, "Por favor Rellene todos los datos");
+                }     
+            }
+        });
+    }
+
+    private void InsertarEventoAceptarUpdate() {
+         this.vistaNuevaReserva.btnaceptar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if(datosCompletosyValidados()){
+                    nueva.setFechaLlegada(Convertidor.StrToDate( vistaNuevaReserva.txtfechaentrada.getText() ));
+                    nueva.setFechaSalida(Convertidor.StrToDate( vistaNuevaReserva.txtfechasalida.getText() ));
+                    nueva.setIdTipoHabitacion(vistaNuevaReserva.cbtipo.getSelectedIndex()+1);
+                    nueva.setTipoPago(vistaNuevaReserva.cbMetodoPago.getSelectedIndex()+1);
+                    nueva.setCantPersonas((int)vistaNuevaReserva.spnCantidad.getValue());
+                    nueva.setIdCliente(cl.getIdCliente());
+                    nueva.setIdHabitacion( Integer.parseInt(vistaNuevaReserva.txtNroHabitacion.getText()) );
+                    nueva.UpdateReservacion();
+                    controladorReservaciones.popularTabla();
+                    int idReporteReservaciones=1;
+                    try{
+                        ResultSet rs=consulta.select("select MAX(idReporteReservaciones) from ReporteReservaciones");
+                        rs.next();
+                        idReporteReservaciones=rs.getInt(1)+1;
+                    }catch(Exception ex){
+                        idReporteReservaciones=1;
+                    }
+                    ReporteReservacion nuevoReporte= new ReporteReservacion(idReporteReservaciones, nueva.getNroConfirmacion(),"Realizo una actualizacion a la reserva", nueva.getIdCliente(),Recepcionista.getIdRecepcionista(), new Date());
+                    nuevoReporte.createReporteReservacion();
+                    
+                    vistaNuevaReserva.dispose();
+                }
+                else{
+                     JOptionPane.showMessageDialog(null, "Por favor Rellene todos los datos");
+                }     
+            }
+        });
     }
 }

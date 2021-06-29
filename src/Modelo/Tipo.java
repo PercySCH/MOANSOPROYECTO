@@ -5,6 +5,8 @@
  */
 package Modelo;
 
+import Modelo.dbconecction.CRUD;
+
 /**
  *
  * @author Percy
@@ -14,6 +16,8 @@ public class Tipo {
     private String nombre;
     private String caracteristica;
     private String comentario;
+    
+    private CRUD consulta=CRUD.getInstance();
 
     public Tipo(int codigoTipo, String nombre, String caracteristica, String comentario) {
         this.idTipoHabitacion = codigoTipo;
@@ -21,7 +25,10 @@ public class Tipo {
         this.caracteristica = caracteristica;
         this.comentario = comentario;
     }
-
+    public void createTipo(){
+        consulta.insert("INSERT INTO tipo VALUES ("+getStatement()+")");
+                            
+    }
     public int getCodigoTipo() {
         return idTipoHabitacion;
     }
@@ -52,6 +59,12 @@ public class Tipo {
 
     public void setComentario(String comentario) {
         this.comentario = comentario;
+    }
+
+    
+    public String getStatement() {
+        return "\""+idTipoHabitacion +"\",\"" +nombre + "\",\"" + caracteristica + "\",\"" + comentario+"\"";
+        
     }
     
     
